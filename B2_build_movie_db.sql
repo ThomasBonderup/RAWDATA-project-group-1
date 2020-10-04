@@ -139,7 +139,7 @@ ALTER TABLE movie_data_model.title_episode OWNER TO postgres;
 -- Name: title_ratings; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
-CREATE TABLE movie_data_model.title_ratings (
+CREATE TABLE movie_data_miiodel.title_ratings (
     tconst character(10),
     averagerating numeric(5,1),
     numvotes integer,
@@ -168,4 +168,14 @@ ALTER TABLE movie_data_model.wi OWNER TO postgres;
 -- Distributing data
 --
 
+INSERT INTO movie_data_model.name
+SELECT DISTINCT nconst, primaryname, birthyear, deathyear FROM public.name_basics;
+
+INSERT INTO movie_data_model.title
+SELECT tconst, titletype, primarytitle, originaltitle, isadult, startyear, endyear, runtimeminutes
+FROM public.title_basics;
+
+INSERT INTO movie_data_model.title_genres
+SELECT tconst, regexp_split_to_table(genres, E',') AS genre
+FROM public.title_basics;
 
