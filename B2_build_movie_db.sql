@@ -1,8 +1,17 @@
+-- GROUP: RAW1, MEMBERS: <Alex Tao Korsgaard Wogelius>, <Emilie Beske Unna-Lindhard>, <Nils Müllenborn>, <Thomas Winther Bonderup>
+--
+-- B.2 Creating tables
+--
+
 --
 -- Name: title; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.title (
+CREATE SCHEMA movie_data_model;
+
+SET search_path TO movie_data_model;
+
+CREATE TABLE movie_data_model.title (
     tconst character(10),
     titletype character varying(20),
     primarytitle text,
@@ -14,46 +23,46 @@ CREATE TABLE public.title (
     poster character varying(256),
     awards text,
     plot text,
-    primary key (tconst),
-    foreign key () references . . . . . . . . . .
-    on delete cascade..
+    primary key (tconst)   
 );
 
-ALTER TABLE public.title OWNER TO postgres;
+ALTER TABLE movie_data_model.title OWNER TO postgres;
 
 --
--- Name: title_genres; Type: TABLE; Schema: public; Owner: postgres
+-- Name: title_genres; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
-CREATE TABLE public.title_genres {
+CREATE TABLE movie_data_model.title_genres (
     tconst character(10),
     genre character varying(20),
+    primary key (tconst, genre),
     foreign key (tconst) references title (tconst)
-}
+);
 
-ALTER TABLE public.title_genres OWNER TO postgres;
+ALTER TABLE movie_data_model.title_genres OWNER TO postgres;
 
 --
--- Name: public.name; Type: TABLE; Schema: public; Owner: postgres
+-- Name: movie_data_model.name; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
-CREATE TABLE public.name (
+CREATE TABLE movie_data_model.name (
     nconst character(10),
     primaryname character varying(256),
     birthyear character(4),
-    deathyear character(4)
+    deathyear character(4),
+    primary key (nconst)
 );
 
-ALTER TABLE public.name OWNER TO postgres;
+ALTER TABLE movie_data_model.name OWNER TO postgres;
 
 --
--- Name: title_principals; Type: TABLE; Schema: public; Owner: postgres
+-- Name: title_principals; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
-CREATE TABLE public.title_principals (
+CREATE TABLE movie_data_model.title_principals (
     tconst character(10),
-    ordering integer,
     nconst character(10),
+    ordering integer,
     category character varying(50),
     job text,
     characters text,
@@ -62,39 +71,40 @@ CREATE TABLE public.title_principals (
     foreign key (tconst) references title (tconst)
 );
 
-ALTER TABLE public.title_principals OWNER TO postgres;
+ALTER TABLE movie_data_model.title_principals OWNER TO postgres;
 
 --
--- Name: public.primaryprofession; Type: TABLE; Schema: public; Owner: postgres
+-- Name: movie_data_model.primaryprofession; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
-CREATE TABLE public.primaryprofession {
+CREATE TABLE movie_data_model.primaryprofession (
     nconst character(10),
     profession character varying(20),
+    primary key (nconst, profession),
     foreign key (nconst) references name (nconst)
-}
+);
 
-ALTER TABLE public.primaryprofession OWNER TO postgres;
+ALTER TABLE movie_data_model.primaryprofession OWNER TO postgres;
 
 --
--- Name: public.knownfortitles; Type: TABLE; Schema: public; Owner: postgres
--- Change diagram
+-- Name: movie_data_model.knownfortitles; Type: TABLE; Schema: movie_data_model; Owner: postgres
+-- 
 --
 
-CREATE TABLE public.knownfortitles {
+CREATE TABLE movie_data_model.knownfortitles (
     nconst character(10),
     tconst character(10),   
     primary key (nconst, tconst),
     foreign key (nconst, tconst) references title_principals (nconst, tconst)
-}
+);
 
-ALTER TABLE public.knownfortitles OWNER TO postgres;
+ALTER TABLE movie_data_model.knownfortitles OWNER TO postgres;
 
 --
--- Name: local_title; Type: TABLE; Schema: public; Owner: postgres
+-- Name: local_title; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
-CREATE TABLE public.local_title (
+CREATE TABLE movie_data_model.local_title (
     titleid character(10),
     ordering integer,
     title text,
@@ -107,49 +117,55 @@ CREATE TABLE public.local_title (
     foreign key (titleid) references title (tconst)
 );
 
-ALTER TABLE public.local_title OWNER TO postgres;
+ALTER TABLE movie_data_model.local_title OWNER TO postgres;
 
 --
--- Name: title_episode; Type: TABLE; Schema: public; Owner: postgres
+-- Name: title_episode; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
-CREATE TABLE public.title_episode (
+CREATE TABLE movie_data_model.title_episode (
     tconst character(10),
     parenttconst character(10),
     seasonnumber integer,
-    episodenumber integer
+    episodenumber integer,
     primary key(tconst, parenttconst),
-    foreign key (tconst, parenttconst) references title (tconst)
+    foreign key (tconst) references title (tconst),
+    foreign key (parenttconst) references title (tconst)
 );
 
-ALTER TABLE public.title_episode OWNER TO postgres;
+ALTER TABLE movie_data_model.title_episode OWNER TO postgres;
 
 --
--- Name: title_ratings; Type: TABLE; Schema: public; Owner: postgres
+-- Name: title_ratings; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
-CREATE TABLE public.title_ratings (
+CREATE TABLE movie_data_model.title_ratings (
     tconst character(10),
     averagerating numeric(5,1),
-    numvotes integer
+    numvotes integer,
     primary key(tconst),
     foreign key (tconst) references title (tconst)
 );
 
-ALTER TABLE public.title_ratings OWNER TO postgres;
+ALTER TABLE movie_data_model.title_ratings OWNER TO postgres;
 
 --
--- Name: wi; Type: TABLE; Schema: public; Owner: postgres
+-- Name: wi; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
-CREATE TABLE public.wi (
+CREATE TABLE movie_data_model.wi (
     tconst character(10) NOT NULL,
     word text NOT NULL,
     field character(1) NOT NULL,
-    lexeme text
+    lexeme text,
     primary key(tconst, word, field),
     foreign key (tconst) references title (tconst)
 );
 
+ALTER TABLE movie_data_model.wi OWNER TO postgres;
 
-ALTER TABLE public.wi OWNER TO postgres;
+--
+-- Distributing data
+--
+
+
