@@ -66,8 +66,7 @@ CREATE TABLE movie_data_model.title_principals (
     category character varying(50),
     job text,
     characters text,
-    primary key (nconst, tconst),
-    foreign key (nconst) references name (nconst),
+    primary key (nconst, tconst, ordering),
     foreign key (tconst) references title (tconst)
 );
 
@@ -78,8 +77,8 @@ ALTER TABLE movie_data_model.title_principals OWNER TO postgres;
 --
 
 CREATE TABLE movie_data_model.primaryprofession (
-    nconst character(10),
-    profession character varying(20),
+    nconst character(20),
+    profession character varying(30),
     primary key (nconst, profession),
     foreign key (nconst) references name (nconst)
 );
@@ -88,14 +87,15 @@ ALTER TABLE movie_data_model.primaryprofession OWNER TO postgres;
 
 --
 -- Name: movie_data_model.knownfortitles; Type: TABLE; Schema: movie_data_model; Owner: postgres
--- 
+-- DEFAULT VALUE
 --
 
 CREATE TABLE movie_data_model.knownfortitles (
     nconst character(10),
     tconst character(10),   
     primary key (nconst, tconst),
-    foreign key (nconst, tconst) references title_principals (nconst, tconst)
+    foreign key (nconst) references name (nconst),
+    foreign key (tconst) references title (tconst)
 );
 
 ALTER TABLE movie_data_model.knownfortitles OWNER TO postgres;
@@ -113,7 +113,7 @@ CREATE TABLE movie_data_model.local_title (
     types character varying(256),
     attributes character varying(256),
     isoriginaltitle boolean,
-    primary key(titleid),
+    primary key(titleid, ordering, region),
     foreign key (titleid) references title (tconst)
 );
 
@@ -139,7 +139,7 @@ ALTER TABLE movie_data_model.title_episode OWNER TO postgres;
 -- Name: title_ratings; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
-CREATE TABLE movie_data_miiodel.title_ratings (
+CREATE TABLE movie_data_model.title_ratings (
     tconst character(10),
     averagerating numeric(5,1),
     numvotes integer,
@@ -179,3 +179,42 @@ INSERT INTO movie_data_model.title_genres
 SELECT tconst, regexp_split_to_table(genres, E',') AS genre
 FROM public.title_basics;
 
+INSERT INTO movie_data_model.title_episode
+SELECT tconst, parenttconst, seasonnumber, episodenumber
+FROM public.title_episode;
+
+INSERT INTO movie_data_model.title_ratings
+SELECT tconst, averagerating, numvotes
+FROM public.title_ratings;
+
+INSERT INTO movie_data_model.wi
+SELECT tconst, word, field, lexeme
+FROM public.wi;
+
+INSERT INTO movie_data_model.local_title
+SELECT DISTINCT titleid, ordering, title, region, language, types, attributes, isoriginaltitle
+FROM public.title_akas;
+
+INSERT INTO movie_data_model.title_principals
+SELECT tconst, nconst, ordering, category, job, characters
+FROM public.title_principals;
+
+INSERT INTO movie_data_model.primaryprofession
+SELECT DISTINCT nconst, regexp_split_to_table(primaryprofession, E',') AS profession
+FROM public.name_basics;
+
+CREATE TABLE movie_data_model.knownfortitles_temp (
+    knownfortitles character varying(256),
+    nconst character varying(256)
+);
+
+INSERT INTO movie_data_model.knownfortitles_temp
+SELECT regexp_split_to_table(knownfortitles, E',') AS knownfortitles, nconst
+FROM public.name_basics;
+
+INSERT INTO movie_data_model.knownfortitles
+SELECT movie_data_model.knownfortitles_temp.nconst, movie_data_model.knownfortitles_temp.knownfortitles AS tconst
+FROM movie_data_model.knownfortitles_temp
+WHERE movie_data_model.knownfortitles_temp.knownfortitles IN (SELECT tconst FROM title);
+
+DROP TABLE movie_data_model.knownfortitles_temp;
