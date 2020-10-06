@@ -1,7 +1,5 @@
--- GROUP: RAW1, MEMBERS: <Alex Tao Korsgaard Wogelius>, <Emilie Beske Unna-Lindhard>, <Nils Müllenborn>, <Thomas Winther Bonderup>
--- C.2 Creating tables for framework
-
 CREATE SCHEMA framework_data_model;
+--keep in one schema
 
 SET search_path TO framework_data_model;
 
@@ -46,8 +44,7 @@ timestamp TIMESTAMP,
 rating integer,
 review text,
 PRIMARY KEY (uconst, tconst, timestamp),
-FOREIGN	 KEY (uconst) REFERENCES framework_data_model.user (uconst),
-FOREIGN KEY (tconst) REFERENCES movie_data_model.title (tconst)
+FOREIGN	 KEY (uconst, tconst) REFERENCES framework_data_model.rating (uconst, tconst)
 );
 
 ALTER TABLE framework_data_model.rating_history OWNER TO postgres;
