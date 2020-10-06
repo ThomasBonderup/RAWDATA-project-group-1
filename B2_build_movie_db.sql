@@ -175,6 +175,14 @@ INSERT INTO movie_data_model.title
 SELECT tconst, titletype, primarytitle, originaltitle, isadult, startyear, endyear, runtimeminutes
 FROM public.title_basics;
 
+WITH omdb_data(tconst, poster, awards, plot) AS (SELECT * FROM public.omdb_data)
+UPDATE movie_data_model.title as t
+SET poster = s.poster,
+    awards = s.awards,
+    plot = s.plot
+FROM omdb_data s
+WHERE t.tconst = s.tconst;
+
 INSERT INTO movie_data_model.title_genres
 SELECT tconst, regexp_split_to_table(genres, E',') AS genre
 FROM public.title_basics;
@@ -218,3 +226,4 @@ FROM movie_data_model.knownfortitles_temp
 WHERE movie_data_model.knownfortitles_temp.knownfortitles IN (SELECT tconst FROM title);
 
 DROP TABLE movie_data_model.knownfortitles_temp;
+
