@@ -5,7 +5,8 @@ CREATE OR REPLACE FUNCTION string_search (string char(50), uconst char(10))
 -- ASsumes a table title - the main part of the source table title_bASics
 RETURNS table (
   tconst char(10),
-  primarytitle text
+  primarytitle text,
+  plot text
 ) 
 LANGUAGE plpgsql
 AS $$
@@ -14,12 +15,13 @@ INSERT INTO search_history(uconst, timestamp, search)
 VALUES(uconst, NOW(), string); 
 RETURN query SELECT t.tconst, t.primarytitle 
 FROM title t
-WHERE t.primarytitle LIKE '%'||string||'%';
+WHERE t.primarytitle LIKE '%'||string||'%' OR t.plot LIKE '%'||string||'%';
 END
 $$;
 
 SELECT * FROM string_search('Remake', 'ui000123');
-SELECT * FROM string_search('Frozen', 'ui000123');
+SELECT * FROM string_search('Frozen', 'ui000123')
+SELECT * FROM string_search('Frozen 2', 'ui000123');
 
 
 -- Trigger function to insert search query in search_history table
