@@ -172,16 +172,8 @@ INSERT INTO movie_data_model.name
 SELECT DISTINCT nconst, primaryname, birthyear, deathyear FROM public.name_basics;
 
 INSERT INTO movie_data_model.title
-SELECT tconst, titletype, primarytitle, originaltitle, isadult, startyear, endyear, runtimeminutes
-FROM public.title_basics;
-
-WITH omdb_data(tconst, poster, awards, plot) AS (SELECT * FROM public.omdb_data)
-UPDATE movie_data_model.title as t
-SET poster = s.poster,
-    awards = s.awards,
-    plot = s.plot
-FROM omdb_data s
-WHERE t.tconst = s.tconst;
+SELECT tconst, titletype, primarytitle, originaltitle, isadult, startyear, endyear, runtimeminutes, poster, awards, plot
+FROM public.title_basics NATURAL LEFT OUTER JOIN public.omdb_data;
 
 INSERT INTO movie_data_model.title_genres
 SELECT tconst, regexp_split_to_table(genres, E',') AS genre
