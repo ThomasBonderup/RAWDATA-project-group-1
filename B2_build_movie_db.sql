@@ -3,13 +3,15 @@
 -- B.2 Creating tables
 --
 
---
--- Name: title; Type: TABLE; Schema: public; Owner: postgres
---
+DROP SCHEMA IF EXISTS movie_data_model CASCADE;
 
 CREATE SCHEMA movie_data_model;
 
 SET search_path TO movie_data_model;
+
+--
+-- Name: title; Type: TABLE; Schema: public; Owner: postgres
+--
 
 CREATE TABLE movie_data_model.title (
     tconst character(10),
@@ -219,3 +221,4 @@ WHERE movie_data_model.knownfortitles_temp.knownfortitles IN (SELECT tconst FROM
 
 DROP TABLE movie_data_model.knownfortitles_temp;
 
+DROP SCHEMA IF EXISTS public CASCADE;
