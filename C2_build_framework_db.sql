@@ -91,3 +91,12 @@ FOREIGN KEY (nconst) REFERENCES movie_data_model.name (nconst)
 );
 
 ALTER TABLE movie_data_model.name_bookmark OWNER TO postgres;
+
+-- Inserts users into user table
+insert into movie_data_model.user
+values ('ui000123', 'Alex', 'Tao', 'alextao@hotmail.com', '********', 'alextao01');
+values ('ui000124', 'Nils', 'Mullenborn', 'nimu@hotmail.com', '********', 'nimu01');
+values ('ui000125', 'Thomas', 'Winther', 'thwi@hotmail.com', '********', 'thwi01');
+values ('ui000126', 'Emilie', 'Unna', 'emun@hotmail.com', '********', 'emun01');
+values ('ui000127', 'Troels', 'Andreasen', 'tran@hotmail.com', '********', 'tran01');
+values ('ui000128', 'Henrik', 'Bulskov', 'hebu@hotmail.com', '********', 'hebu01');
