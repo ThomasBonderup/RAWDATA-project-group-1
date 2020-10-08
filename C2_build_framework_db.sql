@@ -18,7 +18,7 @@ CREATE TABLE movie_data_model.search_history (
 uconst CHARACTER(10),
 timestamp TIMESTAMP,
 search text,
-PRIMARY key (uconst),
+PRIMARY key (uconst, timestamp),
 FOREIGN key (uconst) REFERENCES movie_data_model.user (uconst)
 );
 
