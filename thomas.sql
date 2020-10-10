@@ -115,7 +115,9 @@ $$;
 SELECT * FROM actor_search('Mads Mikkelsen', 'ui000123');
 
 -- D.11 Exact-match Querying
-CREATE OR REPLACE FUNCTION exact_match_search(title CHARACTER(50), plot CHARACTER(50), characters CHARACTER(50), name CHARACTER(50), uconst CHARACTER(10))
+-- returns a list of titles matching the intersecting keywords for the function
+DROP FUNCTION IF EXISTS exact_match_search(w1 CHARACTER(50), w2 CHARACTER(50), w3 CHARACTER(50));
+CREATE OR REPLACE FUNCTION exact_match_search(w1 CHARACTER(50), w2 CHARACTER(50), w3 CHARACTER(50), uconst CHARACTER(10))
 
 RETURNS TABLE (
   tconst CHARACTER(10),
@@ -127,28 +129,31 @@ AS $$
 
 BEGIN
 
+-- stores search string in search history with timestamp
 INSERT INTO search_history(uconst, timestamp, search)
-VALUES(uconst, NOW(), CONCAT(title, plot, characters, name));
+VALUES(uconst, NOW(), CONCAT(w1, w2, w3));
+
+-- using the inverted index wi 
 RETURN query SELECT t.tconst, t.primarytitle 
 FROM title t,
-(SELECT wi.tconst from wi where word = title
-UNION
-SELECT wi.tconst from wi where word = plot
-UNION
-SELECT wi.tconst from wi where word = characters
-UNION
-SELECT wi.tconst from wi where word = name) w
+(SELECT wi.tconst FROM wi WHERE word = w1
+INTERSECT
+SELECT wi.tconst FROM wi WHERE word = w2
+INTERSECT
+SELECT wi.tconst FROM wi WHERE word = w3
+) w
 WHERE t.tconst = w.tconst;
 
 END
 $$;
 
-SELECT * FROM exact_match_search('', 'see', '', 'Mads miKKelsen', 'ui000123');
+SELECT * FROM exact_match_search('apple', 'mads', 'mikkelsen', 'ui000123');
+
 
 -- D.12 Best-match Querying without overloading or variadic function
-DROP FUNCTION IF EXISTS bestmatch(w1 VARCHAR(100), w2 VARCHAR(100), w3 VARCHAR(100));
+DROP FUNCTION IF EXISTS bestmatch(w1 VARCHAR(100), w2 VARCHAR(100), w3 VARCHAR(100), uconst CHARACTER(10));
 
-CREATE OR REPLACE FUNCTION bestmatch(w1 VARCHAR(100), w2 VARCHAR(100), w3 VARCHAR(100))
+CREATE OR REPLACE FUNCTION bestmatch(w1 VARCHAR(100), w2 VARCHAR(100), w3 VARCHAR(100), uconst CHARACTER(10))
 
 RETURNS TABLE (
   tconst CHARACTER(10),
@@ -160,7 +165,11 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 
-RETURN query SELECT t.tconst, sum(relevance) rank, primarytitle FROM title t,
+-- stores search string in search history with timestamp
+INSERT INTO search_history(uconst, timestamp, search)
+VALUES(uconst, NOW(), CONCAT(w1, w2, w3));
+
+RETURN query SELECT t.tconst, SUM(relevance) rank, primarytitle FROM title t,
   (SELECT distinct wi.tconst, 1 relevance FROM wi WHERE word = w1
     UNION ALL
    SELECT distinct wi.tconst, 1 relevance FROM wi WHERE word = w2
@@ -172,4 +181,4 @@ GROUP BY t.tconst, primarytitle ORDER BY RANK DESC;
 END
 $$;
 
-SELECT * FROM bestmatch('apple', 'mads', 'mikkelsen');
+SELECT * FROM bestmatch('apple', 'mads', 'mikkelsen', 'ui000123');
