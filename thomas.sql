@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION string_search (search_string CHARACTER(50), uconst CH
 
 RETURNS TABLE (
   tconst CHARACTER(10),
-  primarytitle text
+  primarytitle TEXT
 )
 
 LANGUAGE plpgsql
@@ -48,7 +48,7 @@ CREATE OR REPLACE FUNCTION structured_string_search(title CHARACTER(50),
 
 RETURNS TABLE (
   tconst CHARACTER(10),
-  primarytitle text
+  primarytitle TEXT
 )
 
 LANGUAGE plpgsql
@@ -119,7 +119,7 @@ CREATE OR REPLACE FUNCTION exact_match_search(title CHARACTER(50), plot CHARACTE
 
 RETURNS TABLE (
   tconst CHARACTER(10),
-  primarytitle text
+  primarytitle TEXT
 ) 
 
 LANGUAGE plpgsql
@@ -144,3 +144,32 @@ END
 $$;
 
 SELECT * FROM exact_match_search('', 'see', '', 'Mads miKKelsen', 'ui000123');
+
+-- D.12 Best-match Querying without overloading or variadic function
+DROP FUNCTION IF EXISTS bestmatch(w1 VARCHAR(100), w2 VARCHAR(100), w3 VARCHAR(100));
+
+CREATE OR REPLACE FUNCTION bestmatch(w1 VARCHAR(100), w2 VARCHAR(100), w3 VARCHAR(100))
+
+RETURNS TABLE (
+  tconst CHARACTER(10),
+  rank BIGINT,
+  title TEXT
+)
+
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+RETURN query SELECT t.tconst, sum(relevance) rank, primarytitle FROM title t,
+  (SELECT distinct wi.tconst, 1 relevance FROM wi WHERE word = w1
+    UNION ALL
+   SELECT distinct wi.tconst, 1 relevance FROM wi WHERE word = w2
+    UNION ALL
+   SELECT distinct wi.tconst, 1 relevance FROM wi WHERE word = w3) w
+WHERE t.tconst = w.tconst
+GROUP BY t.tconst, primarytitle ORDER BY RANK DESC;
+
+END
+$$;
+
+SELECT * FROM bestmatch('apple', 'mads', 'mikkelsen');
