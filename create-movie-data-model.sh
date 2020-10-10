@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-psql -U postgres -c "drop if exists database raw1"
+psql -U postgres -c "drop database if exists raw1"
 
 psql -U postgres -c "create database raw1"
 

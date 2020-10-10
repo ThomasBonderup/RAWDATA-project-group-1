@@ -16,9 +16,9 @@ ALTER TABLE movie_data_model.user OWNER TO postgres;
 
 CREATE TABLE movie_data_model.search_history (
 uconst CHARACTER(10),
-timestamp TIMESTAMP,
+tstamp TIMESTAMP,
 search text,
-PRIMARY key (uconst, timestamp),
+PRIMARY key (uconst, tstamp),
 FOREIGN key (uconst) REFERENCES movie_data_model.user (uconst)
 );
 
@@ -51,10 +51,10 @@ ALTER TABLE movie_data_model.name_rating OWNER TO postgres;
 CREATE TABLE movie_data_model.rating_history (
 uconst CHARACTER(10),
 tconst CHARACTER(10),
-timestamp TIMESTAMP,
+tstamp TIMESTAMP,
 rating integer,
 review text,
-PRIMARY KEY (uconst, tconst, timestamp),
+PRIMARY KEY (uconst, tconst, tstamp),
 FOREIGN	 KEY (uconst, tconst) REFERENCES movie_data_model.rating (uconst, tconst)
 );
 
@@ -74,7 +74,7 @@ ALTER TABLE movie_data_model.title_notes OWNER TO postgres;
 CREATE TABLE movie_data_model.title_bookmark (
 uconst CHARACTER(10),
 tconst CHARACTER(10),
-timestamp TIMESTAMP,
+tstamp TIMESTAMP,
 PRIMARY KEY (uconst, tconst),
 FOREIGN	 KEY (uconst) REFERENCES movie_data_model.user (uconst),
 FOREIGN KEY (tconst) REFERENCES movie_data_model.title (tconst)
@@ -96,7 +96,7 @@ ALTER TABLE movie_data_model.name_notes OWNER TO postgres;
 CREATE TABLE movie_data_model.name_bookmark (
 uconst CHARACTER(10),
 nconst CHARACTER(10),
-timestamp TIMESTAMP,
+tstamp TIMESTAMP,
 PRIMARY KEY (uconst, nconst),
 FOREIGN	 KEY (uconst) REFERENCES movie_data_model.user (uconst),
 FOREIGN KEY (nconst) REFERENCES movie_data_model.name (nconst)

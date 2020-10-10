@@ -19,14 +19,14 @@ AS $$
 BEGIN
 
 -- stores search string in search history with timestamp
-INSERT INTO search_history(uconst, timestamp, search)
-VALUES(uconst, NOW(), search_string); 
+INSERT INTO search_history(uconst, tstamp, search)
+VALUES(uconst, NOW(), search_string);
 
 -- returns table by using ILIKE for string pattern matching
 -- ILIKE is used to pattern match and lower and upper case characters
 -- % matches sequences of zero or more characters
 -- || is used for string concatenation
-RETURN query SELECT t.tconst, t.primarytitle 
+RETURN query SELECT t.tconst, t.primarytitle
 FROM title t
 WHERE t.primarytitle ILIKE '%'||search_string||'%' OR t.plot ILIKE '%'||search_string||'%';
 
@@ -59,8 +59,8 @@ AS $$
 BEGIN
 
 -- stores search string in search history with timestamp
-INSERT INTO search_history(uconst, timestamp, search)
-VALUES(uconst, NOW(), CONCAT(title, plot, characters, name)); 
+INSERT INTO search_history(uconst, tstamp, search)
+VALUES(uconst, NOW(), CONCAT(title, plot, characters, name));
 
 -- returns table by using ILIKE for string pattern matching
 -- ILIKE is used to pattern match and lower and upper case characters
@@ -98,14 +98,14 @@ AS $$
 BEGIN
 
 -- stores search string in search history with timestamp
-INSERT INTO search_history(uconst, timestamp, search)
+INSERT INTO search_history(uconst, tstamp, search)
 VALUES(uconst, NOW(), string);
 
 -- returns table by using ILIKE for string pattern matching
 -- ILIKE is used to pattern match and lower and upper case characters
 -- % matches sequences of zero or more characters
 -- || is used for string concatenation
-RETURN query SELECT name.nconst, name.primaryname 
+RETURN query SELECT name.nconst, name.primaryname
 FROM name NATURAL JOIN title_principals
 WHERE name.primaryname ILIKE '%'||string||'%' OR title_principals.characters ILIKE '%'||string||'%';
 
@@ -123,7 +123,7 @@ CREATE OR REPLACE FUNCTION exact_match_search(w1 CHARACTER(50), w2 CHARACTER(50)
 RETURNS TABLE (
   tconst CHARACTER(10),
   primarytitle TEXT
-) 
+)
 
 LANGUAGE plpgsql
 AS $$
@@ -131,11 +131,11 @@ AS $$
 BEGIN
 
 -- stores search string in search history with timestamp
-INSERT INTO search_history(uconst, timestamp, search)
+INSERT INTO search_history(uconst, tstamp, search)
 VALUES(uconst, NOW(), CONCAT(w1, w2, w3));
 
--- using the inverted index wi 
-RETURN query SELECT t.tconst, t.primarytitle 
+-- using the inverted index wi
+RETURN query SELECT t.tconst, t.primarytitle
 FROM title t,
 (SELECT wi.tconst FROM wi WHERE word = w1
 INTERSECT
@@ -167,7 +167,7 @@ AS $$
 BEGIN
 
 -- stores search string in search history with timestamp
-INSERT INTO search_history(uconst, timestamp, search)
+INSERT INTO search_history(uconst, tstamp, search)
 VALUES(uconst, NOW(), CONCAT(w1, w2, w3));
 
 RETURN query SELECT t.tconst, SUM(relevance) rank, primarytitle FROM title t,
@@ -187,7 +187,7 @@ SELECT * FROM bestmatch('apple', 'mads', 'mikkelsen', 'ui000123');
 
 -- D.12 Best-match Querying
 -- dynamic function using VARIADIC array for multiple input parameters
--- to build and execute a SQL-expression 
+-- to build and execute a SQL-expression
 DROP FUNCTION IF EXISTS dynamic_bestmatch(VARIADIC w text[]);
 
 CREATE OR REPLACE FUNCTION dynamic_bestmatch(VARIADIC w text[])
@@ -202,7 +202,7 @@ LANGUAGE plpgsql
 AS $$
 
 DECLARE
-  w_elem TEXT;	
+  w_elem TEXT;
   q_start TEXT := 'SELECT t.tconst, SUM(relevance) rank, primarytitle FROM title t, ( ';
   q_end TEXT := ') w WHERE t.tconst = w.tconst GROUP BY t.tconst, primarytitle ORDER BY RANK DESC';
   q_result TEXT;
@@ -216,7 +216,7 @@ END LOOP;
 
 -- use substring method to remove the last UNION ALL when building the query
 q_start := SUBSTRING(q_start, 1, LENGTH(q_start)-10);
--- concatenate q_start and q_end into final query 
+-- concatenate q_start and q_end into final query
 q_result := q_start || q_end;
 RETURN QUERY EXECUTE q_result;
 
