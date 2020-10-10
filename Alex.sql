@@ -6,17 +6,13 @@ CREATE OR REPLACE FUNCTION insert_or_update_rating(user_id CHARACTER(10), movie_
 RETURNS void LANGUAGE plpgsql AS $$
 BEGIN
 
-<<<<<<< HEAD
-INSERT INTO
-rating (uconst, tconst, rating, review)
-=======
-IF EXISTS(SELECT * 
-FROM rating 
-WHERE uconst = user_id) 
+IF EXISTS(SELECT *
+FROM rating
+WHERE uconst = user_id)
 AND EXISTS(SELECT *
 FROM rating
 WHERE tconst = movie_id)
-THEN 
+THEN
 RAISE NOTICE 'Already exists';
 
 UPDATE rating
@@ -31,9 +27,8 @@ RETURN;
 
 END IF;
 
-INSERT INTO 
-rating (uconst, tconst, rating, review) 
->>>>>>> 3444d421b2e9b33dfdffc9d47acc7c3e077487e6
+INSERT INTO
+rating (uconst, tconst, rating, review)
 
 VALUES (user_id,
 movie_id,
@@ -49,17 +44,13 @@ CREATE OR REPLACE FUNCTION insert_or_update_rating(user_id CHARACTER(10), movie_
 RETURNS void LANGUAGE plpgsql AS $$
 BEGIN
 
-<<<<<<< HEAD
-INSERT INTO
-rating (uconst, tconst, rating, review)
-=======
-IF EXISTS(SELECT * 
-FROM rating 
-WHERE uconst = user_id) 
+IF EXISTS(SELECT *
+FROM rating
+WHERE uconst = user_id)
 AND EXISTS(SELECT *
 FROM rating
 WHERE tconst = movie_id)
-THEN 
+THEN
 RAISE NOTICE 'Already exists';
 
 UPDATE rating
@@ -74,9 +65,8 @@ RETURN;
 
 END IF;
 
-INSERT INTO 
-rating (uconst, tconst, rating, review) 
->>>>>>> 3444d421b2e9b33dfdffc9d47acc7c3e077487e6
+INSERT INTO
+rating (uconst, tconst, rating, review)
 
 VALUES (user_id,
 movie_id,
@@ -111,19 +101,16 @@ RETURNS TRIGGER LANGUAGE plpgsql AS $$
 
 BEGIN
 
-<<<<<<< HEAD
-UPDATE title_ratings
-=======
 IF EXISTS(SELECT *
 FROM rating
-WHERE OLD.uconst = NEW.uconst) 
+WHERE OLD.uconst = NEW.uconst)
 AND EXISTS(SELECT *
 FROM rating
 WHERE OLD.tconst = NEW.tconst)
 THEN
 RAISE NOTICE 'Value already exists.. .. .. proceeding';
 
-UPDATE title_ratings 
+UPDATE title_ratings
 SET averagerating = (averagerating * numvotes - OLD.rating) / (numvotes - 1),
 numvotes = numvotes - 1
 WHERE tconst = NEW.tconst;
@@ -132,8 +119,7 @@ RAISE NOTICE 'Value subtracted from average';
 
 END IF;
 
-UPDATE title_ratings 
->>>>>>> 3444d421b2e9b33dfdffc9d47acc7c3e077487e6
+UPDATE title_ratings
 SET numvotes = numvotes + 1,
 averagerating = (averagerating) + ((NEW.rating - averagerating) / numvotes)
 WHERE tconst = NEW.tconst;
@@ -144,19 +130,6 @@ RETURN NEW;
 END; $$
 
 CREATE TRIGGER upd_avrg_rating_trigger
-<<<<<<< HEAD
 AFTER INSERT OR UPDATE ON rating
 FOR EACH ROW
 EXECUTE PROCEDURE update_avrg_rating();
-=======
-AFTER INSERT OR UPDATE ON rating 
-FOR EACH ROW 
-EXECUTE PROCEDURE update_avrg_rating();
-
-
-
-
-
-
-
->>>>>>> 3444d421b2e9b33dfdffc9d47acc7c3e077487e6
