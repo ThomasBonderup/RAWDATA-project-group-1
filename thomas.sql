@@ -1,3 +1,5 @@
+SET search_path TO movie_data_model;
+
 -- D.2 Simple Search function
 -- searching on primary title or plot for movie
 -- search string is stored in search history as a side effect when function is called
@@ -110,7 +112,7 @@ WHERE name.primaryname ILIKE '%'||string||'%' OR title_principals.characters ILI
 END
 $$;
 
--- D.5 actor_search function test
+-- D.5 Actor Search function test
 SELECT * FROM actor_search('Mads Mikkelsen', 'ui000123');
 
 -- D.11 Exact-match Querying
@@ -146,6 +148,7 @@ WHERE t.tconst = w.tconst;
 END
 $$;
 
+-- D.11 Exact-match Querying function test
 SELECT * FROM exact_match_search('apple', 'mads', 'mikkelsen', 'ui000123');
 
 -- D.12 Best-match Querying without overloading or variadic function
@@ -179,6 +182,7 @@ GROUP BY t.tconst, primarytitle ORDER BY RANK DESC;
 END
 $$;
 
+-- D.12 Best-match Querying
 SELECT * FROM bestmatch('apple', 'mads', 'mikkelsen', 'ui000123');
 
 -- D.12 Best-match Querying
