@@ -187,3 +187,37 @@ from title_notes t
 where t.uconst = titlen;
 end;
 $$;
+
+-- get search history
+create or replace function get_search_history (usr CHARACTER(10))
+returns table (
+uconst char(10),
+tstamp TIMESTAMP,
+search text
+)
+LANGUAGE plpgsql
+as $$
+BEGIN
+return query SELECT t.uconst, t.tstamp, t.search
+from search_history t
+where t.uconst = get_search_history.usr;
+end;
+$$;
+
+-- get rating history
+create or replace function get_rating_history (usr CHARACTER(10))
+returns table (
+uconst CHARACTER(10),
+tconst CHARACTER(10),
+tstamp TIMESTAMP,
+rating integer,
+review text
+)
+LANGUAGE plpgsql
+as $$
+BEGIN
+return query SELECT t.uconst, t.tconst, t.tstamp, t.rating, t.review
+from rating_history t
+where t.uconst = get_rating_history.usr;
+end;
+$$;
