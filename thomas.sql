@@ -60,7 +60,6 @@ BEGIN
 INSERT INTO search_history(uconst, timestamp, search)
 VALUES(uconst, NOW(), CONCAT(title, plot, characters, name)); 
 
-
 -- returns table by using ILIKE for string pattern matching
 -- ILIKE is used to pattern match and lower and upper case characters
 -- % matches sequences of zero or more characters
@@ -149,7 +148,6 @@ $$;
 
 SELECT * FROM exact_match_search('apple', 'mads', 'mikkelsen', 'ui000123');
 
-
 -- D.12 Best-match Querying without overloading or variadic function
 DROP FUNCTION IF EXISTS bestmatch(w1 VARCHAR(100), w2 VARCHAR(100), w3 VARCHAR(100), uconst CHARACTER(10));
 
@@ -182,3 +180,43 @@ END
 $$;
 
 SELECT * FROM bestmatch('apple', 'mads', 'mikkelsen', 'ui000123');
+
+-- D.12 Best-match Querying
+-- dynamic function using VARIADIC array for multiple input parameters
+-- to build and execute a SQL-expression 
+DROP FUNCTION IF EXISTS dynamic_bestmatch(VARIADIC w text[]);
+
+CREATE OR REPLACE FUNCTION dynamic_bestmatch(VARIADIC w text[])
+
+RETURNS TABLE (
+  tconst CHARACTER(10),
+  rank BIGINT,
+  title TEXT
+)
+
+LANGUAGE plpgsql
+AS $$
+
+DECLARE
+  w_elem TEXT;	
+  q_start TEXT := 'SELECT t.tconst, SUM(relevance) rank, primarytitle FROM title t, ( ';
+  q_end TEXT := ') w WHERE t.tconst = w.tconst GROUP BY t.tconst, primarytitle ORDER BY RANK DESC';
+  q_result TEXT;
+BEGIN
+
+-- using foreach loop to concatenate input parameters to SQL-expression q_start
+FOREACH w_elem IN ARRAY w
+LOOP
+q_start := q_start || 'SELECT distinct wi.tconst, 1 relevance FROM wi WHERE word = '''|| w_elem ||''' UNION ALL ';
+END LOOP;
+
+-- use substring method to remove the last UNION ALL when building the query
+q_start := SUBSTRING(q_start, 1, LENGTH(q_start)-10);
+-- concatenate q_start and q_end into final query 
+q_result := q_start || q_end;
+RETURN QUERY EXECUTE q_result;
+
+END
+$$;
+
+SELECT * FROM dynamic_bestmatch('apple', 'mads', 'mikkelsen');
