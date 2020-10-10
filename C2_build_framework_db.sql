@@ -36,6 +36,18 @@ FOREIGN KEY (tconst) REFERENCES movie_data_model.title (tconst)
 
 ALTER TABLE movie_data_model.rating OWNER TO postgres;
 
+CREATE TABLE movie_data_model.name_rating(
+nconst CHARACTER(10),
+primaryname CHARACTER VARYING(256),
+rating INTEGER,
+PRIMARY KEY (nconst),
+FOREIGN KEY (nconst) REFERENCES movie_data_model.name (nconst)
+);
+
+ALTER TABLE movie_data_model.name_rating OWNER TO postgres;
+
+
+
 CREATE TABLE movie_data_model.rating_history (
 uconst CHARACTER(10),
 tconst CHARACTER(10),
@@ -91,3 +103,8 @@ FOREIGN KEY (nconst) REFERENCES movie_data_model.name (nconst)
 );
 
 ALTER TABLE movie_data_model.name_bookmark OWNER TO postgres;
+
+
+INSERT INTO movie_data_model.name_rating
+SELECT DISTINCT nconst, primaryname
+FROM name;
