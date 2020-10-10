@@ -1,3 +1,4 @@
+-- GROUP: RAW1, MEMBERS: <Alex Tao Korsgaard Wogelius>, <Emilie Beske Unna-Lindhard>, <Nils Müllenborn>, <Thomas Winther Bonderup>
 -- This script contains all the functions that make up the functionality of the database
 ----------------------------------- D1  -----------------------------------
 
