@@ -39,6 +39,7 @@ DELETE FROM movie_data_model.user
 WHERE movie_data_model.user.uconst = delete_user.uconst;
 END;
 $$ LANGUAGE plpgsql;
+
 ----------------------------------------- bookmarks functions
 -- add title bookmark
 CREATE OR REPLACE FUNCTION add_title_bookmark (uconst CHARACTER(10), tconst CHARACTER(10)) RETURNS void AS $$
