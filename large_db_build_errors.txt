@@ -1,0 +1,34 @@
+------------------------ partial copy paste from terminal when building large database ----------- date 10/10/2020 -----
+
+INSERT 0 625085
+psql:B2_build_movie_db.sql:178: ERROR:  duplicate key value violates unique constraint "title_pkey"
+DETAIL:  Key (tconst)=(tt9737852 ) already exists.
+psql:B2_build_movie_db.sql:182: ERROR:  duplicate key value violates unique constraint "title_genres_pkey"
+DETAIL:  Key (tconst, genre)=(tt9760504 , Action) already exists.
+psql:B2_build_movie_db.sql:186: ERROR:  duplicate key value violates unique constraint "title_episode_pkey"
+DETAIL:  Key (tconst, parenttconst)=(tt9754680 , tt5834204 ) already exists.
+psql:B2_build_movie_db.sql:190: ERROR:  duplicate key value violates unique constraint "title_ratings_pkey"
+DETAIL:  Key (tconst)=(tt9737852 ) already exists.
+psql:B2_build_movie_db.sql:194: ERROR:  insert or update on table "wi" violates foreign key constraint "wi_tconst_fkey"
+DETAIL:  Key (tconst)=(tt0001475 ) is not present in table "title".
+psql:B2_build_movie_db.sql:198: ERROR:  insert or update on table "local_title" violates foreign key constraint "local_title_titleid_
+fkey"
+DETAIL:  Key (titleid)=(tt0001475 ) is not present in table "title".
+psql:B2_build_movie_db.sql:202: ERROR:  duplicate key value violates unique constraint "title_principals_pkey"
+DETAIL:  Key (nconst, tconst, ordering)=(nm2893431 , tt9748010 , 9) already exists.
+INSERT 0 1182911
+CREATE TABLE
+INSERT 0 1935184
+INSERT 0 0
+DROP TABLE
+psql:B2_build_movie_db.sql:224: NOTICE:  drop cascades to 9 other objects
+DETAIL:  drop cascades to table public.name_basics
+drop cascades to table public.omdb_data
+drop cascades to table public.title_akas
+drop cascades to table public.title_basics
+drop cascades to table public.title_crew
+drop cascades to table public.title_episode
+drop cascades to table public.title_principals
+drop cascades to table public.title_ratings
+drop cascades to table public.wi
+DROP SCHEMA
