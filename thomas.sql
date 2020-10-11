@@ -33,9 +33,6 @@ WHERE t.primarytitle ILIKE '%'||search_string||'%' OR t.plot ILIKE '%'||search_s
 END
 $$;
 
--- D.2 Simple Search function test
-SELECT * FROM string_search('Remake', 'ui000001');
-
 -- D.4 Structured String Search function
 -- searching with 4 parameters title, plot, characters, name and uconst for more precise search queries on title
 -- search string is stored in search history as a side effect when function is called
@@ -75,10 +72,6 @@ AND   name.primaryname 		       ILIKE '%'||structured_string_search.name||'%';
 END
 $$;
 
--- D.4 Structured String Search function test
--- test case with lower and upper case characters including empty parameters
-SELECT * FROM structured_string_search('', 'see', '', 'Mads miKKelsen', 'ui000001');
-
 -- D.5 actor_search function
 -- searching on primary name of actor or character
 -- search string is stored in search history as a side effect when function is called
@@ -112,11 +105,8 @@ WHERE name.primaryname ILIKE '%'||string||'%' OR title_principals.characters ILI
 END
 $$;
 
--- D.5 Actor Search function test
-SELECT * FROM actor_search('Mads Mikkelsen', 'ui000001');
-
 -- D.11 Exact-match Querying
--- returns a list of titles matching the intersecting keywords for the function
+-- function returns a list of titles matching 3 intersecting keywords
 DROP FUNCTION IF EXISTS exact_match_search(w1 CHARACTER(50), w2 CHARACTER(50), w3 CHARACTER(50));
 CREATE OR REPLACE FUNCTION exact_match_search(w1 CHARACTER(50), w2 CHARACTER(50), w3 CHARACTER(50), uconst CHARACTER(10))
 
@@ -147,9 +137,6 @@ WHERE t.tconst = w.tconst;
 
 END
 $$;
-
--- D.11 Exact-match Querying function test
-SELECT * FROM exact_match_search('apple', 'mads', 'mikkelsen', 'ui000001');
 
 -- D.12 Best-match Querying without overloading or variadic function
 DROP FUNCTION IF EXISTS bestmatch(w1 VARCHAR(100), w2 VARCHAR(100), w3 VARCHAR(100), uconst CHARACTER(10));
@@ -183,9 +170,6 @@ END
 $$;
 
 -- D.12 Best-match Querying
-SELECT * FROM bestmatch('apple', 'mads', 'mikkelsen', 'ui000001');
-
--- D.12 Best-match Querying
 -- dynamic function using VARIADIC array for multiple input parameters
 -- to build and execute a SQL-expression
 DROP FUNCTION IF EXISTS dynamic_bestmatch(VARIADIC w text[]);
@@ -203,7 +187,7 @@ AS $$
 
 DECLARE
   w_elem TEXT;
-  q_start TEXT := 'SELECT t.tconst, SUM(relevance) rank, primarytitle FROM title t, ( ';
+  q_start TEXT := 'SELECT t.tconst, SUM(relevance) RANK, primarytitle FROM title t, ( ';
   q_end TEXT := ') w WHERE t.tconst = w.tconst GROUP BY t.tconst, primarytitle ORDER BY RANK DESC';
   q_result TEXT;
 BEGIN
@@ -222,6 +206,3 @@ RETURN QUERY EXECUTE q_result;
 
 END
 $$;
-
-SELECT * FROM dynamic_bestmatch('apple', 'mads', 'mikkelsen');
-
