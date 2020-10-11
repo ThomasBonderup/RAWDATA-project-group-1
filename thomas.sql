@@ -34,7 +34,7 @@ END
 $$;
 
 -- D.2 Simple Search function test
-SELECT * FROM string_search('Remake', 'ui000123');
+SELECT * FROM string_search('Remake', 'ui000001');
 
 -- D.4 Structured String Search function
 -- searching with 4 parameters title, plot, characters, name and uconst for more precise search queries on title
@@ -77,7 +77,7 @@ $$;
 
 -- D.4 Structured String Search function test
 -- test case with lower and upper case characters including empty parameters
-SELECT * FROM structured_string_search('', 'see', '', 'Mads miKKelsen', 'ui000123');
+SELECT * FROM structured_string_search('', 'see', '', 'Mads miKKelsen', 'ui000001');
 
 -- D.5 actor_search function
 -- searching on primary name of actor or character
@@ -113,7 +113,7 @@ END
 $$;
 
 -- D.5 Actor Search function test
-SELECT * FROM actor_search('Mads Mikkelsen', 'ui000123');
+SELECT * FROM actor_search('Mads Mikkelsen', 'ui000001');
 
 -- D.11 Exact-match Querying
 -- returns a list of titles matching the intersecting keywords for the function
@@ -149,7 +149,7 @@ END
 $$;
 
 -- D.11 Exact-match Querying function test
-SELECT * FROM exact_match_search('apple', 'mads', 'mikkelsen', 'ui000123');
+SELECT * FROM exact_match_search('apple', 'mads', 'mikkelsen', 'ui000001');
 
 -- D.12 Best-match Querying without overloading or variadic function
 DROP FUNCTION IF EXISTS bestmatch(w1 VARCHAR(100), w2 VARCHAR(100), w3 VARCHAR(100), uconst CHARACTER(10));
@@ -183,7 +183,7 @@ END
 $$;
 
 -- D.12 Best-match Querying
-SELECT * FROM bestmatch('apple', 'mads', 'mikkelsen', 'ui000123');
+SELECT * FROM bestmatch('apple', 'mads', 'mikkelsen', 'ui000001');
 
 -- D.12 Best-match Querying
 -- dynamic function using VARIADIC array for multiple input parameters
@@ -224,3 +224,4 @@ END
 $$;
 
 SELECT * FROM dynamic_bestmatch('apple', 'mads', 'mikkelsen');
+
