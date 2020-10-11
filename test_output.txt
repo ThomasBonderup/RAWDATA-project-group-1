@@ -1,0 +1,181 @@
+-- GROUP: RAW1, MEMBERS: <Alex Tao Korsgaard Wogelius>, <Emilie Beske Unna-Lindhard>, <Nils Müllenborn>, <Thomas Winther Bonderup>
+SET search_path TO movie_data_model;
+SET
+-- D.1.
+-- D.2 Simple Search
+-- Test case: 
+SELECT * FROM string_search('Remake', 'ui000001');
+   tconst   |                          primarytitle                           
+------------+-----------------------------------------------------------------
+ tt0245844  | The Count of Monte Cristo
+ tt0334226  | Remake
+ tt0488478  | 12
+ tt0734662  | The Mind and the Matter
+ tt0734731  | Shadow Play/Grace Note
+ tt10981530 | Peaky Blinders - Remake
+ tt12266294 | Remakes, Remasters and Rereleases
+ tt2028462  | 30 Anos de Chaves
+ tt2095753  | Rock Hunter in 3D
+ tt2431488  | Explode for Me
+ tt3520344  | Mysterious Disc
+ tt3716344  | Pokémon Omega Ruby
+ tt3716398  | Pokémon Alpha Sapphire
+ tt3907180  | Remake, Remix, Rip-Off: About Copy Culture & Turkish Pop Cinema
+ tt4997858  | Risen: The Story of Chron 'Hell Razah' Smith
+ tt5034320  | Kingdom Hearts HD 2.8 Final Chapter Prologue
+ tt5161760  | The Clown
+ tt6027478  | Dhruva
+ tt6057416  | Final Fantasy VII Remake
+ tt7293238  | Remake
+ tt7826034  | Resident Evil 2
+ tt7927838  | Shadow of the Colossus
+ tt8598482  | Luigi's Mansion
+ tt8874852  | Most Wanted HD Remakes
+ tt9839526  | The Legend of Zelda: Link's Awakening
+ tt9844256  | Code Geass: Lelouch of the Rebellion III - Glorification
+(26 rows)
+
+-- D.3
+-- D.4 Structured String Search
+-- Test case: lower and upper case characters including empty parameters
+SELECT * FROM structured_string_search('', 'see', '', 'Mads miKKelsen', 'ui000001');
+   tconst   | primarytitle  
+------------+---------------
+ tt0418455  | Adam's Apples
+(1 row)
+
+-- D.5 Actor Search
+-- Test case: 
+SELECT * FROM actor_search('Mads Mikkelsen', 'ui000001');
+   nconst   |  primaryname   
+------------+----------------
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+(4 rows)
+
+-- D.6
+-- D.7
+-- D.8
+-- D.9
+-- D.10
+-- D.11 Exact-match Querying
+-- Test case: 
+SELECT * FROM exact_match_search('apple', 'mads', 'mikkelsen', 'ui000001');
+   tconst   | primarytitle  
+------------+---------------
+ tt0418455  | Adam's Apples
+(1 row)
+
+-- D.12 Best-match Querying
+-- Test case:
+SELECT * FROM exact_match_search('apple', 'mads', 'mikkelsen', 'ui000001');
+   tconst   | primarytitle  
+------------+---------------
+ tt0418455  | Adam's Apples
+(1 row)
+
+-- Test case: dynamic function using VARIADIC array for multiple input parameters
+SELECT * FROM dynamic_bestmatch('apple', 'mads', 'mikkelsen');
+   tconst   | rank |                             title                             
+------------+------+---------------------------------------------------------------
+ tt0418455  |    3 | Adam's Apples
+ tt0457655  |    2 | After the Wedding
+ tt2106476  |    2 | The Hunt
+ tt5807606  |    2 | Death Stranding
+ tt0428441  |    1 | The Cutting Edge: The Magic of Movie Editing
+ tt0439704  |    1 | Milk Can
+ tt0449056  |    1 | Lick an Apple Like a Pussy: The Movie Stanislawski Never Made
+ tt0495865  |    1 | Nandini
+ tt0697753  |    1 | The Pie
+ tt0758433  |    1 | The Person de Leo N.
+ tt0765125  |    1 | Noget om Halfdan
+ tt10055344 |    1 | NXT TakeOver: New York
+ tt10131114 |    1 | Apple at Work - The Underdogs
+ tt10283234 |    1 | Ratrir Jatri
+ tt1040004  |    1 | Seducer's Fall
+ tt1090643  |    1 | Att: Kasimir
+ tt11213810 |    1 | Aurora: Apple Tree
+ tt12066446 |    1 | Alan Walker & Ruben: Heading Home
+ tt1217553  |    1 | ...Og det var Danmark
+ tt12351942 |    1 | The Most Dangerous Concert Ever: The Morricone Duel
+ tt1326214  |    1 | Downtown Calling
+ tt1340454  |    1 | Our Neck of the Woods
+ tt1385513  |    1 | The Distance Between the Apple and the Tree
+ tt1568292  |    1 | The Buffalo Son
+ tt1572002  |    1 | En stemme for livet
+ tt1586732  |    1 | Death, Taxes and Apple Juice
+ tt1735910  |    1 | The Capsule
+ tt1784493  |    1 | King for Two Days
+ tt1853535  |    1 | De genfødte
+ tt1854312  |    1 | Music
+ tt1928116  |    1 | Assassin's Creed: Revelations
+ tt2036416  |    1 | You Are the Apple of My Eye
+ tt2056563  |    1 | Easy Under the Apple Bough
+ tt2104994  |    1 | Steve Jobs: The Lost Interview
+ tt2132321  |    1 | Eden
+ tt2342437  |    1 | Words of Captain Scott
+ tt2435152  |    1 | The Loving Dead
+ tt2560114  |    1 | Passio
+ tt2836568  |    1 | Det røde eplet
+ tt2995858  |    1 | Hitman
+ tt3177386  |    1 | A Day in the Country
+ tt3542412  |    1 | Erik & Else
+ tt3615116  |    1 | Paradise Hotel
+ tt3711064  |    1 | Deliver Us
+ tt3980364  |    1 | Inside
+ tt4011396  |    1 | Greed Eats the Soul
+ tt4046102  |    1 | The Permaculture Orchard: Beyond Organic
+ tt4130308  |    1 | An Island
+ tt4321796  |    1 | Blue
+ tt4499186  |    1 | Portrait of a Garden
+ tt4643086  |    1 | Ávaxtakarfan
+ tt4659056  |    1 | The Day Will Come
+ tt4771548  |    1 | Apple: Backstage
+ tt4997858  |    1 | Risen: The Story of Chron 'Hell Razah' Smith
+ tt5316590  |    1 | For min datter
+ tt5612428  |    1 | Sunless
+ tt5709838  |    1 | Avatar: The Eagle Has Landed
+ tt5801184  |    1 | Blindsided
+ tt5816540  |    1 | Susanne Sundfør: Accelerate
+ tt5890754  |    1 | The Taste of Apple
+ tt6190908  |    1 | Hugo På Bas
+ tt6202076  |    1 | Leaked
+ tt6326340  |    1 | O' Bloody Night
+ tt6441102  |    1 | Complicit
+ tt6603666  |    1 | Maximillian
+ tt6668018  |    1 | Påfugl Blant duer
+ tt6746062  |    1 | Paradigm
+ tt7010412  |    1 | The Great Buddha +
+ tt7144150  |    1 | Det Glade Postbud
+ tt7305820  |    1 | Past and Present
+ tt7310086  |    1 | Deadline
+ tt7313322  |    1 | Alpha and Omega
+ tt8015190  |    1 | Apple iPhone 8 & iPhone X: Official Trailer - Parody
+ tt8106994  |    1 | Welcome Home
+ tt8346546  |    1 | Love Notes to Newton
+ tt8525684  |    1 | Hitman 2
+ tt8835200  |    1 | The In-Between
+ tt8998634  |    1 | Maid in Hell
+ tt9004986  |    1 | Syndebukken: Prosessen mot Harry Lindstrøm
+ tt9150630  |    1 | Markets
+ tt9460980  |    1 | Sunday
+ tt9643290  |    1 | The Story of an Apple
+ tt9665540  |    1 | De Hvi'
+ tt9720546  |    1 | Løvernes Konge
+ tt9720550  |    1 | The Goatkeeper
+ tt9720554  |    1 | Run Sunday, Run
+ tt9720558  |    1 | Mushi Mushi
+ tt9720560  |    1 | The Lion King
+ tt9720564  |    1 | Big Bowl
+ tt0339723  |    1 | The Star Dreamer
+ tt9720566  |    1 | Forhandleren
+ tt0392787  |    1 | Nimbus '47
+ tt0406282  |    1 | Bubbles
+ tt0417459  |    1 | Back to Manhattan
+(94 rows)
+
+-- D.13
+-- D.14
+-- D.15
