@@ -264,34 +264,10 @@ END
 $$;
 
 -- D.3
-
-
--- INSERT OR UPDATE USER RATING  BASIC
-
-CREATE OR REPLACE FUNCTION insert_or_update_rating(user_id CHARACTER(10), movie_id CHARACTER(10), movie_rating INTEGER)
+-- Insert user rating
+CREATE OR REPLACE FUNCTION ins_user_rating(user_id CHARACTER(10), movie_id CHARACTER(10), movie_rating INTEGER)
 RETURNS void LANGUAGE plpgsql AS $$
 BEGIN
-
-IF EXISTS(SELECT *
-FROM rating
-WHERE uconst = user_id)
-AND EXISTS(SELECT *
-FROM rating
-WHERE tconst = movie_id)
-THEN
-RAISE NOTICE 'Already exists';
-
-UPDATE rating
-SET uconst = user_id,
-tconst = movie_id,
-rating = movie_rating,
-review = 'N/A'
-WHERE uconst = user_id AND tconst = movie_id;
-RAISE NOTICE 'Update complete';
-
-RETURN;
-
-END IF;
 
 INSERT INTO
 rating (uconst, tconst, rating, review)
@@ -301,35 +277,14 @@ movie_id,
 movie_rating,
 'N/A');
 
+RAISE NOTICE 'Insert complete';
+
 END $$;
 
-
--- INSERT OR UPDATE USER RATING  OVERLOADED
-
-CREATE OR REPLACE FUNCTION insert_or_update_rating(user_id CHARACTER(10), movie_id CHARACTER(10), movie_rating INTEGER, movie_review TEXT)
+-- Insert user rating - overloaded
+CREATE OR REPLACE FUNCTION ins_user_rating(user_id CHARACTER(10), movie_id CHARACTER(10), movie_rating INTEGER, movie_review TEXT)
 RETURNS void LANGUAGE plpgsql AS $$
 BEGIN
-
-IF EXISTS(SELECT *
-FROM rating
-WHERE uconst = user_id)
-AND EXISTS(SELECT *
-FROM rating
-WHERE tconst = movie_id)
-THEN
-RAISE NOTICE 'Already exists';
-
-UPDATE rating
-SET uconst = user_id,
-tconst = movie_id,
-rating = movie_rating,
-review = movie_review
-WHERE uconst = user_id AND tconst = movie_id;
-RAISE NOTICE 'Update complete';
-
-RETURN;
-
-END IF;
 
 INSERT INTO
 rating (uconst, tconst, rating, review)
@@ -338,6 +293,42 @@ VALUES (user_id,
 movie_id,
 movie_rating,
 movie_review);
+
+RAISE NOTICE 'Insert complete';
+
+END $$;
+
+
+-- Update user rating
+CREATE OR REPLACE FUNCTION upd_user_rating(user_id CHARACTER(10), movie_id CHARACTER(10), movie_rating INTEGER)
+RETURNS void LANGUAGE plpgsql AS $$
+BEGIN
+
+UPDATE rating
+SET uconst = user_id,
+tconst = movie_id,
+rating = movie_rating,
+review = OLD.review
+WHERE uconst = user_id AND tconst = movie_id;
+
+RAISE NOTICE 'Update complete';
+
+END $$;
+
+
+-- Update user rating - overloaded
+CREATE OR REPLACE FUNCTION upd_user_rating(user_id CHARACTER(10), movie_id CHARACTER(10), movie_rating INTEGER, movie_review TEXT)
+RETURNS void LANGUAGE plpgsql AS $$
+BEGIN
+
+UPDATE rating
+SET uconst = user_id,
+tconst = movie_id,
+rating = movie_rating,
+review = movie_review
+WHERE uconst = user_id AND tconst = movie_id;
+
+RAISE NOTICE 'Update complete';
 
 END $$;
 
