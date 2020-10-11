@@ -1,0 +1,6 @@
+Study number 69782
+
+D.12 Best-match Querying function uses a VARIADIC array as an input parameter to make the function more flexible by allowing any number of input parameters...
+
+Dynamic query by executing a SQL expression
+
