@@ -104,7 +104,6 @@ FOREIGN KEY (nconst) REFERENCES movie_data_model.name (nconst)
 
 ALTER TABLE movie_data_model.name_bookmark OWNER TO postgres;
 
-
 INSERT INTO movie_data_model.name_rating
 SELECT DISTINCT nconst, primaryname
 FROM name;

@@ -25,7 +25,7 @@ CREATE TABLE movie_data_model.title (
     poster character varying(256),
     awards text,
     plot text,
-    primary key (tconst)   
+    primary key (tconst)
 );
 
 ALTER TABLE movie_data_model.title OWNER TO postgres;
@@ -94,7 +94,7 @@ ALTER TABLE movie_data_model.primaryprofession OWNER TO postgres;
 
 CREATE TABLE movie_data_model.knownfortitles (
     nconst character(10),
-    tconst character(10),   
+    tconst character(10),
     primary key (nconst, tconst),
     foreign key (nconst) references name (nconst),
     foreign key (tconst) references title (tconst)
@@ -145,6 +145,7 @@ CREATE TABLE movie_data_model.title_ratings (
     tconst character(10),
     averagerating numeric(5,1),
     numvotes integer,
+    weightedaverage numeric(5,1),
     primary key(tconst),
     foreign key (tconst) references title (tconst)
 );
@@ -188,6 +189,9 @@ FROM public.title_episode;
 INSERT INTO movie_data_model.title_ratings
 SELECT tconst, averagerating, numvotes
 FROM public.title_ratings;
+
+UPDATE movie_data_model.title_ratings
+SET weightedaverage = (((movie_data_model.title_ratings.averagerating * movie_data_model.title_ratings.numvotes) + (7.0 * 25000)) / (movie_data_model.title_ratings.numvotes + 25000));
 
 INSERT INTO movie_data_model.wi
 SELECT tconst, word, field, lexeme

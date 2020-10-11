@@ -126,6 +126,11 @@ WHERE tconst = NEW.tconst;
 
 RAISE NOTICE 'Average updated';
 
+UPDATE title_ratings
+SET weightedaverage = (((title_ratings.averagerating * title_ratings.numvotes) + (7.0 * 25000)) / (title_ratings.numvotes + 25000));
+
+RAISE NOTICE 'Weighted Average updated';
+
 RETURN NEW;
 END; $$
 
