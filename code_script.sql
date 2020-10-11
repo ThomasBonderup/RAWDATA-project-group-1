@@ -343,7 +343,7 @@ INSERT INTO rating_history(uconst, tconst, tstamp, rating, review)
 VALUES (NEW.uconst, NEW.tconst, NOW(), NEW.rating, NEW.review);
 
 RETURN NEW;
-END; $$
+END $$;
 
 CREATE TRIGGER insert_rating_history
 AFTER INSERT OR UPDATE ON rating
@@ -378,7 +378,7 @@ SET weightedaverage = (((title_ratings.averagerating * title_ratings.numvotes) +
 RAISE NOTICE 'Weighted Average updated';
 
 RETURN NEW;
-END; $$
+END $$;
 
 CREATE TRIGGER upd_avrg_rating_trigger
 AFTER UPDATE ON rating
@@ -404,7 +404,7 @@ SET weightedaverage = (((title_ratings.averagerating * title_ratings.numvotes) +
 RAISE NOTICE 'Weighted Average updated';
 
 RETURN NEW;
-END;$$
+END $$;
 
 
 CREATE TRIGGER ins_avrg_rating_trigger
