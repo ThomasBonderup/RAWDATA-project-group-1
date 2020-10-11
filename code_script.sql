@@ -308,7 +308,7 @@ UPDATE rating
 SET uconst = user_id,
 tconst = movie_id,
 rating = movie_rating,
-review = OLD.review
+review = 'N/A'
 WHERE uconst = user_id AND tconst = movie_id;
 
 RAISE NOTICE 'Update complete';
