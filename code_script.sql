@@ -484,7 +484,7 @@ $$;
 -- D.6
 
 -- D.7
-create or replace function generate_name_ratings() RETURNS void LANGUAGE plpgsql AS $$
+create or replace function generate_name_ratings() RETURNS TRIGGER LANGUAGE plpgsql AS $$
 begin
 
 create or replace view casting as
