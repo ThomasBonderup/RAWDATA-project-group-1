@@ -1,5 +1,5 @@
 -- GROUP: RAW1, MEMBERS: <Alex Tao Korsgaard Wogelius>, <Emilie Beske Unna-Lindhard>, <Nils Müllenborn>, <Thomas Winther Bonderup>
-
+-- test script for testing function and procedures
 SET search_path TO movie_data_model;
 -- D.1.
 
@@ -46,7 +46,8 @@ SELECT * FROM dynamic_bestmatch('apple', 'mads', 'mikkelsen');
 SELECT * FROM dynamic_bestmatch('apple');
 
 -- D.13
-
+-- no solution
 -- D.14
-
+-- no solution
 -- D.15
+-- no solution
