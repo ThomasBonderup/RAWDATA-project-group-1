@@ -489,6 +489,27 @@ END
 $$;
 
 -- D.6
+create or replace FUNCTION get_co_players(pname text)
+returns table (
+primaryname character varying(256),
+count bigint
+)
+LANGUAGE plpgsql
+as $$
+begin
+
+create or replace view co_player_temp as
+select tconst,primarytitle,nconst,primaryname from title natural join title_principals natural join name;
+
+return query
+select co_player_temp.primaryname, count(*) from co_player_temp
+where tconst in (
+select tconst from title_principals natural join name as t
+where t.primaryname like pname)
+group by co_player_temp.primaryname order by count(*) desc limit 12;
+
+end;
+$$;
 
 -- D.7
 create or replace function generate_name_ratings() RETURNS TRIGGER LANGUAGE plpgsql AS $$

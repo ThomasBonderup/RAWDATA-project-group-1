@@ -51,8 +51,12 @@ SELECT * FROM structured_string_search('', 'see', '', 'Mads miKKelsen', 'ui00000
 SELECT * FROM actor_search('Mads Mikkelsen', 'ui000001');
 
 -- D.6
+-- Test case: find the 12 actors that name co plays with (return table with primaryname and a count)
+SELECT * from get_co_players('Clint Eastwood');
 
 -- D.7
+-- Should generate all ratings for names 
+SELECT generate_name_ratings();
 
 -- D.8
 
