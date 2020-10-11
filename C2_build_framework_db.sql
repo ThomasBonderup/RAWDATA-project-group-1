@@ -39,7 +39,7 @@ ALTER TABLE movie_data_model.rating OWNER TO postgres;
 CREATE TABLE movie_data_model.name_rating(
 nconst CHARACTER(10),
 primaryname CHARACTER VARYING(256),
-rating INTEGER,
+rating numeric(5,1),
 PRIMARY KEY (nconst),
 FOREIGN KEY (nconst) REFERENCES movie_data_model.name (nconst)
 );

@@ -266,7 +266,7 @@ $$;
 -- D.3
 
 
--- INSERT OR UPDATE USER RATING  BASIC 
+-- INSERT OR UPDATE USER RATING  BASIC
 
 CREATE OR REPLACE FUNCTION insert_or_update_rating(user_id CHARACTER(10), movie_id CHARACTER(10), movie_rating INTEGER)
 RETURNS void LANGUAGE plpgsql AS $$
@@ -304,7 +304,7 @@ movie_rating,
 END $$;
 
 
--- INSERT OR UPDATE USER RATING  OVERLOADED 
+-- INSERT OR UPDATE USER RATING  OVERLOADED
 
 CREATE OR REPLACE FUNCTION insert_or_update_rating(user_id CHARACTER(10), movie_id CHARACTER(10), movie_rating INTEGER, movie_review TEXT)
 RETURNS void LANGUAGE plpgsql AS $$
@@ -341,7 +341,7 @@ movie_review);
 
 END $$;
 
--- UPDATE RATING HISTORY - TRIGGER 
+-- UPDATE RATING HISTORY - TRIGGER
 
 CREATE OR REPLACE FUNCTION update_rating_history()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
@@ -360,7 +360,7 @@ AFTER INSERT OR UPDATE ON rating
 FOR EACH ROW
 EXECUTE PROCEDURE update_rating_history();
 
--- UPDATE AVERAGE RATING 
+-- UPDATE AVERAGE RATING
 
 CREATE OR REPLACE FUNCTION update_avrg_rating()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
@@ -484,6 +484,35 @@ $$;
 -- D.6
 
 -- D.7
+create or replace function generate_name_ratings() RETURNS void LANGUAGE plpgsql AS $$
+begin
+
+create or replace view casting as
+select tconst, primarytitle, nconst, primaryname from title natural join title_principals natural join name;
+
+UPDATE name_rating
+SET rating = t.rating
+from ( select nconst, sum(averagerating*numvotes)/sum(numvotes) as rating
+from casting natural join title_ratings
+GROUP BY casting.nconst) as t
+
+where t.nconst = name_rating.nconst;
+END; $$;
+
+create or replace function generate_name_ratings() RETURNS void LANGUAGE plpgsql AS $$
+begin
+
+create or replace view casting as
+select tconst, primarytitle, nconst, primaryname from title natural join title_principals natural join name;
+
+UPDATE name_rating
+SET rating = t.rating
+from ( select nconst, sum(averagerating*numvotes)/sum(numvotes) as rating
+from casting natural join title_ratings
+GROUP BY casting.nconst) as t
+
+where t.nconst = name_rating.nconst;
+END; $$;
 
 -- D.8
 
