@@ -55,8 +55,8 @@ SELECT * FROM actor_search('Mads Mikkelsen', 'ui000001');
 SELECT * from get_co_players('Clint Eastwood');
 
 -- D.7
--- Should generate all ratings for names 
-SELECT generate_name_ratings();
+-- Should generate all ratings for names
+--SELECT generate_name_ratings();
 
 -- D.8
 
