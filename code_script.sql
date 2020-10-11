@@ -497,22 +497,13 @@ from casting natural join title_ratings
 GROUP BY casting.nconst) as t
 
 where t.nconst = name_rating.nconst;
+RETURN NEW;
 END; $$;
 
-create or replace function generate_name_ratings() RETURNS void LANGUAGE plpgsql AS $$
-begin
-
-create or replace view casting as
-select tconst, primarytitle, nconst, primaryname from title natural join title_principals natural join name;
-
-UPDATE name_rating
-SET rating = t.rating
-from ( select nconst, sum(averagerating*numvotes)/sum(numvotes) as rating
-from casting natural join title_ratings
-GROUP BY casting.nconst) as t
-
-where t.nconst = name_rating.nconst;
-END; $$;
+CREATE TRIGGER upd_name_rating_trigger
+AFTER INSERT OR UPDATE ON rating
+FOR EACH ROW
+EXECUTE PROCEDURE generate_name_ratings();
 
 -- D.8
 
