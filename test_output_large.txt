@@ -1,0 +1,1447 @@
+-- GROUP: RAW1, MEMBERS: <Alex Tao Korsgaard Wogelius>, <Emilie Beske Unna-Lindhard>, <Nils Müllenborn>, <Thomas Winther Bonderup>
+-- test script for testing function and procedures
+SET search_path TO movie_data_model;
+SET
+-- D.1 Basic framework functionality
+-- Test cases for user
+SELECT add_user('ui000007', 'Test', 'User 07', 'test07@test.dk', '07pw', 'testuser07');
+ add_user 
+----------
+ 
+(1 row)
+
+SELECT update_user('ui000007', 'Test', 'Test 07.2', 'test07.2@test.dk', '07.2pw', 'testuser07.2');
+ update_user 
+-------------
+ 
+(1 row)
+
+SELECT delete_user('ui000007');
+ delete_user 
+-------------
+ 
+(1 row)
+
+-- Test cases for title bookmarks
+SELECT add_title_bookmark('ui000002', 'tt9999991');
+ add_title_bookmark 
+--------------------
+ 
+(1 row)
+
+SELECT delete_title_bookmark('ui000002', 'tt9999991');
+ delete_title_bookmark 
+-----------------------
+ 
+(1 row)
+
+SELECT * from get_title_bookmarks('ui000002');
+   uconst   |   tconst   
+------------+------------
+ ui000002   | tt9999994 
+ ui000002   | tt9999993 
+(2 rows)
+
+-- Test cases for name bookmarks
+SELECT add_name_bookmark('ui000002', 'nm3800107');
+ add_name_bookmark 
+-------------------
+ 
+(1 row)
+
+SELECT delete_name_bookmark('ui000002', 'nm3800107');
+ delete_name_bookmark 
+----------------------
+ 
+(1 row)
+
+SELECT * from get_name_bookmarks('ui000002');
+   uconst   |   nconst   
+------------+------------
+ ui000002   | nm0000096 
+ ui000002   | nm0000117 
+ ui000002   | nm0000118 
+(3 rows)
+
+-- Test cases for title notes
+SELECT add_title_notes('ui000002', 'tt9999991', 'This is a note lets see what i can write here 123, ***');
+ add_title_notes 
+-----------------
+ 
+(1 row)
+
+SELECT update_title_notes('ui000002', 'tt9999991', 'this is the updated title note');
+ update_title_notes 
+--------------------
+ 
+(1 row)
+
+SELECT delete_title_notes('ui000002', 'tt9999991');
+ delete_title_notes 
+--------------------
+ 
+(1 row)
+
+SELECT * from get_title_notes('ui000002');
+   uconst   |   tconst   |          notes           
+------------+------------+--------------------------
+ ui000002   | tt9999999  | dummy t note ababc1xyzc4
+ ui000002   | tt9999998  | dummy t note ababc1xyzc5
+ ui000002   | tt9999997  | dummy t note abc1xyzabc6
+ ui000002   | tt9999996  | dummy t note abcabc1xyz7
+(4 rows)
+
+-- Test cases for name notes
+SELECT add_name_notes('ui000002', 'nm3800107', 'OG name note');
+ add_name_notes 
+----------------
+ 
+(1 row)
+
+SELECT update_name_notes('ui000002', 'tt9999991', 'this is the updated name note');
+ update_name_notes 
+-------------------
+ 
+(1 row)
+
+SELECT delete_name_notes('ui000002', 'nm3800107');
+ delete_name_notes 
+-------------------
+ 
+(1 row)
+
+SELECT * from get_name_notes('ui000002');
+   uconst   |   nconst   |        notes         
+------------+------------+----------------------
+ ui000002   | nm0000226  | dummy n note abc4qwe
+ ui000002   | nm0000171  | dummy n note abc5xyz
+ ui000002   | nm0000178  | dummy n note abc6qwe
+(3 rows)
+
+-- Test case for get search history
+SELECT * from get_search_history('ui000002');
+   uconst   |           tstamp           |   search    
+------------+----------------------------+-------------
+ ui000002   | 2020-02-11 19:41:31.904682 | apples
+ ui000002   | 2020-01-02 15:19:41.904682 | 2008
+ ui000002   | 2020-07-06 16:42:41.904682 | rupert gint
+(3 rows)
+
+-- Test case for get rating history
+SELECT * from get_rating_history('ui000002');
+   uconst   |   tconst   |           tstamp           | rating |              review               
+------------+------------+----------------------------+--------+-----------------------------------
+ ui000002   | tt9999996  | 2020-09-08 16:23:11.904682 |      8 | this is a dummy review
+ ui000002   | tt9999997  | 2020-09-09 18:19:11.904682 |      9 | i m to lazy to do a proper review
+ ui000002   | tt9999995  | 2020-09-02 16:22:11.904682 |      4 | bad
+ ui000002   | tt9999995  | 2020-03-09 12:39:11.904682 |      6 | ok
+ ui000002   | tt9999995  | 2020-09-06 16:26:11.904682 |      8 | good
+(5 rows)
+
+
+-- D.2 Simple Search
+-- Test case: find all movies with simple search with 1 parameter on title name or plot
+--   	      select on search_history before an after to check if search string is stored
+SELECT * FROM search_history;
+   uconst   |           tstamp           |    search     
+------------+----------------------------+---------------
+ ui000001   | 2020-10-08 14:23:51.904682 | harry potter
+ ui000001   | 2020-09-09 16:29:11.904682 | Dicaprio
+ ui000002   | 2020-02-11 19:41:31.904682 | apples
+ ui000002   | 2020-01-02 15:19:41.904682 | 2008
+ ui000002   | 2020-07-06 16:42:41.904682 | rupert gint
+ ui000003   | 2020-10-23 12:29:21.904682 | good place
+ ui000003   | 2020-09-09 16:29:11.904682 | teeth
+ ui000003   | 2020-02-11 19:41:31.904682 | limitless
+ ui000003   | 2020-01-02 15:19:41.904682 | 2008
+ ui000004   | 2020-07-06 16:42:41.904682 | skjdsdf
+ ui000004   | 2020-10-23 12:29:21.904682 | agent 47
+ ui000004   | 2020-09-09 16:29:11.904682 | 007
+ ui000004   | 2020-02-11 19:41:31.904682 | james bond
+ ui000005   | 2020-01-02 15:29:41.904682 | harrison ford
+ ui000005   | 2020-07-06 16:42:41.904682 | indiana jones
+ ui000006   | 2020-10-23 12:29:21.904682 | the blacklist
+ ui000006   | 2020-09-02 11:44:51.904682 | the simpsons
+(17 rows)
+
+
+SELECT * FROM string_search('Remake', 'ui000001');
+   tconst   |                             primarytitle                             
+------------+----------------------------------------------------------------------
+ tt3564924  | The Remake
+ tt2659374  | Ku! Kin-dza-dza
+ tt2828546  | Sleep
+ tt4421572  | Jackson
+ tt3315000  | Remake
+ tt12607768 | Princess Bride
+ tt1886649  | Race War: The Remake
+ tt6027478  | Dhruva
+ tt9844256  | Code Geass: Lelouch of the Rebellion III - Glorification
+ tt5275314  | My Best Friend's Wedding
+ tt6038168  | Casting
+ tt6971752  | Shubh Mangal Savdhan
+ tt3077212  | O Signo das Tetas
+ tt5328352  | Everybody's Fine
+ tt1455023  | Gramercy Stories
+ tt8983202  | Kabir Singh
+ tt3817652  | Ranna
+ tt4439194  | Uyire.. Uyire..
+ tt5833252  | Muthina Kathirika
+ tt1132578  | Summer Holiday
+ tt3138604  | Thunderbirds Are Go
+ tt9068514  | Perdida
+ tt6561394  | Breaking Point: The War for Democracy in Ukraine
+ tt7180392  | Peace Breaker
+ tt0155408  | Zara Si Zindagi
+ tt2172584  | Maps to the Stars
+ tt8690478  | Atrapa a un ladrón
+ tt0042756  | Muchachas de Uniforme
+ tt5438276  | Saagasam
+ tt3654680  | Vampyres
+ tt0245872  | Donga Mogudu
+ tt0245844  | The Count of Monte Cristo
+ tt1992278  | Who's Afraid of Vagina Wolf?
+ tt5795382  | Right Right
+ tt6789158  | Aakasha Mittayee
+ tt10374830 | 'The IMDb Show' On Location: 'Aladdin' Red Carpet
+ tt8757776  | The Great Conqueror
+ tt5572884  | Seesa
+ tt3868452  | There's No Place Like Utopia
+ tt5833706  | Straight Outta Oz
+ tt0364236  | Billa
+ tt9327250  | Evil Dead (2013 'Remake')
+ tt5438308  | Speedunnodu
+ tt4308724  | Silent Taxi Driver
+ tt5448510  | The Golden Castle
+ tt4360438  | Demon Dolls
+ tt8718114  | Japanese Borscht
+ tt9296208  | Halloween (2007 Remake) (Explicit Version)
+ tt5958298  | Tamilselvanum Thaniyar Anjalum
+ tt0034142  | Saddlemates
+ tt2266938  | Vulgaria
+ tt2256867  | The Last Movie
+ tt2357489  | Zanjeer
+ tt9134830  | 'Aladdin' & A Whole New World of Disney Live-Action
+ tt2951188  | The Lost Remake of Beau Geste
+ tt6143358  | The Taming of the Dads
+ tt6722726  | Come As You Are
+ tt7309654  | First Kiss
+ tt4002286  | Fix It & Finish It
+ tt3150056  | Junk Bonds: The Return of Junkbucket
+ tt6361832  | Winnetou - Das Geheimnis vom Silbersee
+ tt10384944 | Lassie - Eine abenteuerliche Reise
+ tt4997858  | Risen: The Story of Chron 'Hell Razah' Smith
+ tt3091224  | A Dress Rehearsal for an Execution
+ tt4786618  | Krishnamma Kalipindi Iddarini
+ tt0021997  | In Old Cheyenne
+ tt0264820  | Magalir Mattum
+ tt10664190 | Take 5 With Mike Moh
+ tt7370770  | Aku Cinta Kamu
+ tt0037096  | Mrs. Parkington
+ tt11316922 | Why Noah Hawley Should Remake 'Voyage Home' for 4th 'Star Trek' Film
+ tt0026319  | Escapade
+ tt0058262  | The Killers
+ tt5143402  | Aashiqui: True Love
+ tt10809306 | Take 5 With Jillian Bell
+ tt0058222  | I'd Rather Be Rich
+ tt2592464  | Dzhentlmeny, udachi!
+ tt7509020  | Arise
+ tt4697076  | Dynamite
+ tt3983464  | O Pátio das Cantigas
+ tt6121634  | Lion King Remake Must Haves?
+ tt2976172  | Sixteen
+ tt2431488  | Explode for Me
+ tt4337414  | Gopala Gopala
+ tt3407486  | Chandralekha
+ tt3907180  | Remake, Remix, Rip-Off: About Copy Culture & Turkish Pop Cinema
+ tt5328784  | Bangalore Naatkal
+ tt5330856  | Divine Gate
+ tt0033712  | Here Comes Mr. Jordan
+ tt3159258  | White Zombie
+ tt5058148  | Malcriados
+ tt5786874  | I HATE MOVIE REMAKES
+ tt9078578  | Spin-offs and Reboots
+ tt2861320  | Policegiri
+ tt5896470  | Pravegaya
+ tt12274696 | Re-Casting the '80s With the Stars of 'Valley Girl'
+ tt8268972  | Khamoshi
+ tt3520378  | Judd Apatow
+ tt0060260  | The Crazy-Quilt
+ tt0077745  | Invasion of the Body Snatchers
+ tt8717446  | Blackbird
+ tt9143820  | Less Than Evil
+ tt4061558  | Yoddha The Warrior
+ tt10128152 | Sembaruthi
+ tt2338706  | Unnam
+ tt6908976  | Knights of the Zodiac: Saint Seiya
+ tt3008348  | Dashamukha
+ tt4088352  | Emergency Center
+ tt3475192  | La Virgen de la Calle
+ tt0047203  | Magnificent Obsession
+ tt2635832  | Doggiewoggiez! Poochiewoochiez!
+ tt4027430  | Evil Night
+ tt9114124  | Cambio tutto
+ tt9367438  | I Hate 'Live-Action' Disney Remakes
+ tt2354492  | Raising the Dead
+ tt5928448  | Prem Ki Bujhini
+ tt0334226  | Remake
+ tt5159422  | Sankarabharanam
+ tt0488478  | 12
+ tt5612156  | An Almost Perfect Country
+ tt12119582 | Project 88: Back to the Future Too
+ tt3551954  | Raiders!: The Story of the Greatest Fan Film Ever Made
+ tt0082671  | Lola
+ tt0080715  | The Falls
+ tt2191765  | Un moment d'égarement
+ tt3144084  | Chaarulatha
+ tt0033666  | Glamour Boy
+ tt2366750  | The Little Tin Man
+ tt3528906  | Our RoboCop Remake
+ tt3812238  | Bachchan
+ tt6001878  | Meendum Oru Kadhal Kadhai
+ tt1784589  | Players
+(132 rows)
+
+
+SELECT * FROM search_history;
+   uconst   |           tstamp           |    search     
+------------+----------------------------+---------------
+ ui000001   | 2020-10-08 14:23:51.904682 | harry potter
+ ui000001   | 2020-09-09 16:29:11.904682 | Dicaprio
+ ui000002   | 2020-02-11 19:41:31.904682 | apples
+ ui000002   | 2020-01-02 15:19:41.904682 | 2008
+ ui000002   | 2020-07-06 16:42:41.904682 | rupert gint
+ ui000003   | 2020-10-23 12:29:21.904682 | good place
+ ui000003   | 2020-09-09 16:29:11.904682 | teeth
+ ui000003   | 2020-02-11 19:41:31.904682 | limitless
+ ui000003   | 2020-01-02 15:19:41.904682 | 2008
+ ui000004   | 2020-07-06 16:42:41.904682 | skjdsdf
+ ui000004   | 2020-10-23 12:29:21.904682 | agent 47
+ ui000004   | 2020-09-09 16:29:11.904682 | 007
+ ui000004   | 2020-02-11 19:41:31.904682 | james bond
+ ui000005   | 2020-01-02 15:29:41.904682 | harrison ford
+ ui000005   | 2020-07-06 16:42:41.904682 | indiana jones
+ ui000006   | 2020-10-23 12:29:21.904682 | the blacklist
+ ui000006   | 2020-09-02 11:44:51.904682 | the simpsons
+ ui000001   | 2020-10-12 21:43:12.975624 | Remake
+(18 rows)
+
+
+-- D.3
+
+-- Test case: Inserting a new (random) title rating to generate name ratings which is a trigger function
+-- We should make an initial generate function as well, that isn't a trigger.
+SELECT ins_user_rating('ui000001', 'tt9999996', 7);
+ ins_user_rating 
+-----------------
+ 
+(1 row)
+
+
+-- Test case: Displaying the name rating of an actor, to show that this will be updated alongside a title rating
+SELECT *
+FROM name_rating
+WHERE nconst = 'nm99999999';
+ nconst | primaryname | rating 
+--------+-------------+--------
+(0 rows)
+
+
+-- Test case: Inserting a title rating on a movie which "stars" nm1449677 to see that his name rating changes
+SELECT ins_user_rating('ui000002', 'tt9999999', 1);
+ ins_user_rating 
+-----------------
+ 
+(1 row)
+
+
+-- Test case: Showing that the name_rating of nm1449677 has changed
+SELECT *
+FROM name_rating
+WHERE nconst = 'nm99999999';
+ nconst | primaryname | rating 
+--------+-------------+--------
+(0 rows)
+
+
+-- Test case: Updating a rating from the same user on the same movie.
+-- The old rating will be subtracted from the average title rating and the new value will be updated.
+SELECT upd_user_rating('ui000001', 'tt9999999', 10);
+ upd_user_rating 
+-----------------
+ 
+(1 row)
+
+
+
+-- Test case: Testing insert on user rating with review
+SELECT ins_user_rating('ui000001', 'tt9999994', 8, 'Greatest movie I ever watched');
+ ins_user_rating 
+-----------------
+ 
+(1 row)
+
+
+-- Test case: Showing the result ofthe query above
+SELECT *
+FROM rating
+WHERE tconst = 'tt9999994'  AND uconst = 'ui000001';
+   uconst   |   tconst   | rating |            review             
+------------+------------+--------+-------------------------------
+ ui000001   | tt9999994  |      8 | Greatest movie I ever watched
+(1 row)
+
+
+-- Test case: Showing that the rating history is updated with inserts
+SELECT *
+FROM rating_history
+WHERE uconst = 'ui000001';
+   uconst   |   tconst   |           tstamp           | rating |                  review                  
+------------+------------+----------------------------+--------+------------------------------------------
+ ui000001   | tt9999999  | 2020-09-09 16:29:11.904682 |      7 | Awesome! best ever :)
+ ui000001   | tt9999998  | 2020-03-05 14:37:11.904682 |      3 | Interesting, invigorating but funny 3/10
+ ui000001   | tt9999997  | 2020-09-06 16:29:11.904682 |      7 | scary stuff, but still good
+ ui000001   | tt9999997  | 2020-07-09 16:39:11.904682 |      8 | scary stuff, alright i guess
+ ui000001   | tt9999996  | 2020-10-12 21:43:15.797199 |      7 | N/A
+ ui000001   | tt9999999  | 2020-10-12 21:44:13.993521 |     10 | N/A
+ ui000001   | tt9999994  | 2020-10-12 21:44:42.584711 |      8 | Greatest movie I ever watched
+(7 rows)
+
+
+-- Test case: Testing update on user ratings with review
+SELECT upd_user_rating('ui000001', 'tt9999998', 4, 'I watched it again and changed my mind');
+ upd_user_rating 
+-----------------
+ 
+(1 row)
+
+
+-- Test case: Showing the result ofthe query above
+SELECT *
+FROM rating
+WHERE tconst = 'tt9999998'  AND uconst = 'ui000001';
+   uconst   |   tconst   | rating |                 review                 
+------------+------------+--------+----------------------------------------
+ ui000001   | tt9999998  |      4 | I watched it again and changed my mind
+(1 row)
+
+
+-- Test case: Showing that the rating history is updated with updates on title ratings
+SELECT *
+FROM rating_history
+WHERE uconst = 'ui000001';
+   uconst   |   tconst   |           tstamp           | rating |                  review                  
+------------+------------+----------------------------+--------+------------------------------------------
+ ui000001   | tt9999999  | 2020-09-09 16:29:11.904682 |      7 | Awesome! best ever :)
+ ui000001   | tt9999998  | 2020-03-05 14:37:11.904682 |      3 | Interesting, invigorating but funny 3/10
+ ui000001   | tt9999997  | 2020-09-06 16:29:11.904682 |      7 | scary stuff, but still good
+ ui000001   | tt9999997  | 2020-07-09 16:39:11.904682 |      8 | scary stuff, alright i guess
+ ui000001   | tt9999996  | 2020-10-12 21:43:15.797199 |      7 | N/A
+ ui000001   | tt9999999  | 2020-10-12 21:44:13.993521 |     10 | N/A
+ ui000001   | tt9999994  | 2020-10-12 21:44:42.584711 |      8 | Greatest movie I ever watched
+ ui000001   | tt9999998  | 2020-10-12 21:45:10.256692 |      4 | I watched it again and changed my mind
+(8 rows)
+
+
+
+
+-- D.4 Structured String Search
+-- Test case: find all movies with structured search with 4 parameters,
+-- 	      title name, plot, characters and name,
+-- 	      lower and upper case characters added including empty parameters
+SELECT * FROM structured_string_search('', 'see', '', 'Mads miKKelsen', 'ui000001');
+   tconst   |          primarytitle           
+------------+---------------------------------
+ tt0418455  | Adam's Apples
+ tt1276419  | A Royal Affair
+ tt4089746  | ...And the Woman Clothed in Sun
+ tt4139588  | Polar
+(4 rows)
+
+
+-- D.5 Actor Search
+-- Test case: find all actor names with actor search with 1 parameter on actor name or character
+SELECT * FROM actor_search('Mads Mikkelsen', 'ui000001');
+   nconst   |  primaryname   
+------------+----------------
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+ nm0586568  | Mads Mikkelsen
+(58 rows)
+
+
+-- D.6
+-- Test case: find the 12 actors that name co plays with (return table with primaryname and a count)
+SELECT * from get_co_players('Clint Eastwood');
+  primaryname   | count 
+----------------+-------
+ Clint Eastwood |    48
+ Robert Lorenz  |     8
+ Joel Cox       |     8
+ Tom Stern      |     5
+ Lennie Niehaus |     5
+ Morgan Freeman |     4
+ Robert Daley   |     4
+ Bruce Surtees  |     4
+ Jack N. Green  |     4
+ Don Siegel     |     3
+ Paul Haggis    |     3
+ Ferris Webster |     3
+(12 rows)
+
+
+-- D.7
+-- Should generate all ratings for names
+--SELECT generate_name_ratings();
+
+-- D.8
+
+-- D.9
+
+-- D.10
+
+-- D.11 Exact-match Querying
+-- Test case D11a: find titles by searching on 3 intersecting keywords in inverted index wi
+SELECT * FROM exact_match_search('apple', 'mads', 'mikkelsen', 'ui000001');
+   tconst   | primarytitle  
+------------+---------------
+ tt0418455  | Adam's Apples
+(1 row)
+
+
+-- D.12 Best-match Querying
+-- Test case D.12a: find ranked titles with multiple paramters by using VARIADIC array
+SELECT * FROM dynamic_bestmatch('apple', 'mads', 'mikkelsen');
+   tconst   | rank |                                       title                                       
+------------+------+-----------------------------------------------------------------------------------
+ tt0418455  |    3 | Adam's Apples
+ tt2373035  |    2 | Entrée
+ tt2373037  |    2 | Sorbet
+ tt2373039  |    2 | Fromage
+ tt2373041  |    2 | Trou Normand
+ tt0315543  |    2 | Open Hearts
+ tt0342492  |    2 | The Green Butchers
+ tt6820256  |    2 | Arctic
+ tt3724578  |    2 | Antipasto
+ tt2106476  |    2 | The Hunt
+ tt1196948  |    2 | Charlie Countryman
+ tt2243973  |    2 | Hannibal
+ tt2720680  |    2 | The Salvation
+ tt6938828  |    2 | At Eternity's Gate
+ tt2273326  |    2 | Move On
+ tt0920458  |    2 | Flame & Citron
+ tt0457655  |    2 | After the Wedding
+ tt0236027  |    2 | Flickering Lights
+ tt1276419  |    2 | A Royal Affair
+ tt2054790  |    2 | Age of Uprising: The Legend of Michael Kohlhaas
+ tt0396184  |    2 | With Blood on My Hands: Pusher II
+ tt3000124  |    2 | Kaiseki
+ tt2370419  |    2 | Apéritif
+ tt2373019  |    2 | Buffet Froid
+ tt2373021  |    2 | Rôti
+ tt3877674  |    2 | Men & Chicken
+ tt2373023  |    2 | Relevés
+ tt3967248  |    2 | Limbo
+ tt2373025  |    2 | Savoureux
+ tt3984450  |    2 | Primavera
+ tt3984452  |    2 | Secondo
+ tt3984456  |    2 | Aperitivo
+ tt2373027  |    2 | Amuse-Bouche
+ tt2373029  |    2 | Potage
+ tt3611334  |    2 | Nordic Factory
+ tt4035340  |    2 | Contorno
+ tt2373031  |    2 | Oeuf
+ tt3230882  |    2 | Sakizuke
+ tt3230884  |    2 | Hassun
+ tt3230886  |    2 | Takiawase
+ tt4057954  |    2 | Dolce
+ tt4796414  |    2 | A Bond for Life: How James Bond Changed My Life
+ tt4057962  |    2 | Digestivo
+ tt4057974  |    2 | The Great Red Dragon
+ tt3230890  |    2 | Mukozuke
+ tt3230894  |    2 | Su-zakana
+ tt3230896  |    2 | Futamono
+ tt3230898  |    2 | Yakimono
+ tt4089740  |    2 | ...And the Woman Clothed with the Sun
+ tt4089746  |    2 | ...And the Woman Clothed in Sun
+ tt4089748  |    2 | ...And the Beast from the Sea
+ tt4089752  |    2 | The Number of the Beast Is 666
+ tt4089754  |    2 | The Wrath of the Lamb
+ tt3230900  |    2 | Shiizakana
+ tt3230904  |    2 | Naka-Choko
+ tt3230906  |    2 | Ko no Mono
+ tt3230908  |    2 | Mizumono
+ tt4139588  |    2 | Polar
+ tt2373033  |    2 | Coquilles
+ tt3230910  |    2 | Tome-wan
+ tt10956906 |    1 | Poslouchej
+ tt10980364 |    1 | Streaming Wars! Who Will Win Your Attention?
+ tt11487192 |    1 | Jennifer Aniston
+ tt12130728 |    1 | Vilde vidunderlige Danmark
+ tt12164018 |    1 | Movies That Changed My Life
+ tt1217553  |    1 | ...Og det var Danmark
+ tt1220905  |    1 | Sour Apple Freeze Pop
+ tt1277953  |    1 | Madagascar 3: Europe's Most Wanted
+ tt12845242 |    1 | Village of Lost Children
+ tt1322385  |    1 | Submarino
+ tt1326214  |    1 | Downtown Calling
+ tt1360797  |    1 | Lakshmi and Me
+ tt1385513  |    1 | The Distance Between the Apple and the Tree
+ tt1422093  |    1 | Mom's Apple Pie: The Heart of the Lesbian Mothers' Custody Movement
+ tt1493817  |    1 | Made in Denmark: The Movie
+ tt1527723  |    1 | Rocco vs Cleopatra
+ tt1546653  |    1 | The Red Chapel
+ tt1568292  |    1 | The Buffalo Son
+ tt1572002  |    1 | En stemme for livet
+ tt1584923  |    1 | Brute Force
+ tt1650393  |    1 | C.O.G.
+ tt1657510  |    1 | Gimme Shelter
+ tt1729226  |    1 | 10 timer til Paradis
+ tt1734475  |    1 | Pete & Cleo
+ tt1784493  |    1 | King for Two Days
+ tt1854312  |    1 | Music
+ tt1920849  |    1 | Bachelorette
+ tt1935229  |    1 | Siodmak
+ tt1937118  |    1 | Chinese Puzzle
+ tt1984153  |    1 | Excision
+ tt1985966  |    1 | Cloudy With a Chance of Meatballs 2
+ tt1995285  |    1 | Det akutte menneske
+ tt2036416  |    1 | You Are the Apple of My Eye
+ tt2048877  |    1 | The Ambassador
+ tt2057918  |    1 | Call It a Balance in the Unbalance
+ tt2080374  |    1 | Steve Jobs
+ tt2104994  |    1 | Steve Jobs: The Lost Interview
+ tt2106557  |    1 | Invisible World
+ tt2107835  |    1 | The Skinny
+ tt2132321  |    1 | Eden
+ tt2139919  |    1 | Gimme the Loot
+ tt2140403  |    1 | Slaughter Daughter
+ tt2158455  |    1 | The Taste of Apple Seeds
+ tt2182239  |    1 | Varg Veum - Kalde hjerter
+ tt2187099  |    1 | Terror Vortex
+ tt2188220  |    1 | Daughters
+ tt2197128  |    1 | Pornopung
+ tt2208568  |    1 | Montana
+ tt2219554  |    1 | Megalomania
+ tt2265431  |    1 | Me You and Five Bucks
+ tt2290127  |    1 | Apples of the Golan
+ tt2330912  |    1 | Macross Plus Movie Edition
+ tt2341762  |    1 | The Legacy
+ tt2342071  |    1 | Dorothy and the Witches of Oz
+ tt2356791  |    1 | Legends of Chima
+ tt2359121  |    1 | Miracle Apples
+ tt2429638  |    1 | A Caretaker's Tale
+ tt2510016  |    1 | The Us Festival 1982: The US Generation Documentary
+ tt2510894  |    1 | Hotel Transylvania 2
+ tt2520678  |    1 | Kaptara
+ tt2523752  |    1 | Nerd vs. Geek
+ tt2527186  |    1 | All Cheerleaders Die
+ tt2530936  |    1 | The Expedition to the End of the World
+ tt2530962  |    1 | She Sings
+ tt2537368  |    1 | Dicte
+ tt2560230  |    1 | Market Day
+ tt2560232  |    1 | Attack on Eagle Spire
+ tt2560234  |    1 | The Biggest Race of All
+ tt2560238  |    1 | Gorillas Gone Wild
+ tt2560240  |    1 | Foxtrot
+ tt2560242  |    1 | The CHI Jackers
+ tt2560244  |    1 | Balancing Act
+ tt2583190  |    1 | MENSAX
+ tt2583198  |    1 | Game Night
+ tt2600812  |    1 | The Hundred Year Moon
+ tt2639228  |    1 | Fake CHI, Real Trouble
+ tt2639234  |    1 | Crocodile Tears
+ tt2639240  |    1 | Ravens vs. Eagles
+ tt2639248  |    1 | Reunion Gone Wrong
+ tt2639250  |    1 | Laval in Exile
+ tt2639256  |    1 | The Black Cloud
+ tt2639260  |    1 | Chima Falls
+ tt2639264  |    1 | For Chima!
+ tt2672162  |    1 | Apple Stories
+ tt2675318  |    1 | Devils of War
+ tt2708936  |    1 | Midtimellem
+ tt2720590  |    1 | Heroin
+ tt2735412  |    1 | Hvor lyset kommer ind
+ tt2818178  |    1 | When Animals Dream
+ tt2836568  |    1 | Det røde eplet
+ tt2896000  |    1 | Kailangan ko'y ikaw
+ tt2924742  |    1 | Spring Never Comes
+ tt2931864  |    1 | Federico García Lorca Noir Despair
+ tt2990116  |    1 | Run DMZ
+ tt2996228  |    1 | John Apple Jack
+ tt3013332  |    1 | Steve Jobs: Consciously Genius
+ tt3031694  |    1 | Risky Listing
+ tt3054410  |    1 | Etgar Keret: What Animal Are You?
+ tt3107224  |    1 | Mother Up!
+ tt3138102  |    1 | Side om side
+ tt3144938  |    1 | Roffa
+ tt3219512  |    1 | Pilot
+ tt3219678  |    1 | A Brony Tale
+ tt3230958  |    1 | Shoe I Am
+ tt3237468  |    1 | Kødkataloget
+ tt3246178  |    1 | Everybody Sees 2Bit's Wang
+ tt3246184  |    1 | Say Hello to My Landscaper Friend
+ tt3246186  |    1 | Overnight Delight
+ tt3300980  |    1 | The 12th Man
+ tt3312378  |    1 | Ever After High
+ tt3338594  |    1 | Seeing Red
+ tt3351154  |    1 | Ein Fall für Zwei: Reloaded
+ tt3379566  |    1 | Verhängnisvolle Freundschaft
+ tt3379570  |    1 | Mörderisches Vertrauen
+ tt3447982  |    1 | Into the Outlands
+ tt3447990  |    1 | A Tangled Web
+ tt3447996  |    1 | The Legend Thief
+ tt3448008  |    1 | The Eagle and the Bear
+ tt3448012  |    1 | Tooth or Consequences
+ tt3448024  |    1 | This May Sting a Bit
+ tt3457208  |    1 | Filmpje
+ tt3469518  |    1 | The Whole Shebang
+ tt3480908  |    1 | Amamiyot
+ tt3528728  |    1 | Shrub It In
+ tt3542188  |    1 | April 9th
+ tt3547682  |    1 | What We Become
+ tt3575044  |    1 | Welcome to New York!
+ tt3594330  |    1 | The Patron
+ tt3602460  |    1 | Accident
+ tt3604054  |    1 | The Big Apple
+ tt3615116  |    1 | Paradise Hotel
+ tt3620146  |    1 | Lulu
+ tt3638488  |    1 | Follow the Money
+ tt3665804  |    1 | Hallo New York
+ tt3672742  |    1 | Turbo Kid
+ tt3681610  |    1 | The Team
+ tt3691474  |    1 | The Mysteries of Science
+ tt3701742  |    1 | Fire Dreaming
+ tt3701758  |    1 | Attack of the Ice Clan
+ tt3701764  |    1 | The Call of Cavora
+ tt3701770  |    1 | Trial by Fire
+ tt3701818  |    1 | The Crescent
+ tt3701824  |    1 | Fired Up!
+ tt3701834  |    1 | Cool and Collected
+ tt3701848  |    1 | The Snowball Effect
+ tt3701858  |    1 | The King Thing
+ tt3701866  |    1 | A Very Slippery Slope
+ tt3701872  |    1 | The Artifact
+ tt3701876  |    1 | The Phoenix Has Landed
+ tt3701882  |    1 | A Spark of Hope
+ tt3729162  |    1 | Mississippi Delta
+ tt3773240  |    1 | Struggle for Life
+ tt3774392  |    1 | Episode #1.8
+ tt3774398  |    1 | Episode #1.7
+ tt3774404  |    1 | Episode #1.2
+ tt3774412  |    1 | Episode #1.1
+ tt3774414  |    1 | Episode #1.3
+ tt3774416  |    1 | Episode #1.4
+ tt3774418  |    1 | Episode #1.5
+ tt3774424  |    1 | Episode #1.6
+ tt3782790  |    1 | Comeback
+ tt3823930  |    1 | Cold Feet
+ tt3824440  |    1 | Resolutions and Revelations
+ tt3846542  |    1 | And the Apple of Discord
+ tt3847964  |    1 | Candy Apple
+ tt3877346  |    1 | Apple in Your Eye
+ tt3951732  |    1 | Chalk It Up
+ tt3978500  |    1 | Skinny Legs Sketch Show
+ tt3989420  |    1 | Wings of Fire
+ tt3989422  |    1 | The Heart of Cavora
+ tt4018944  |    1 | Episode #1.1
+ tt4035398  |    1 | Meglerne
+ tt4038670  |    1 | Gold Coast
+ tt4046102  |    1 | The Permaculture Orchard: Beyond Organic
+ tt4056008  |    1 | Tett kloakk
+ tt4058740  |    1 | New Girl In Town
+ tt4060962  |    1 | A Stand Up Guy
+ tt4074364  |    1 | The Model
+ tt4075458  |    1 | Beyond Sleep
+ tt4093508  |    1 | Palestine Marathon
+ tt4109364  |    1 | Cubed
+ tt4129894  |    1 | Big Apple Blowup
+ tt4130308  |    1 | An Island
+ tt4146942  |    1 | Granli Quiz
+ tt4168292  |    1 | Turbomodul
+ tt4171252  |    1 | Apple Pie: Yummy Adventures in Hi-8
+ tt4179074  |    1 | De fractie
+ tt4183398  |    1 | Like, Share, Die
+ tt4190500  |    1 | The World of Ever After High
+ tt4195492  |    1 | Empati for begynnere
+ tt4253116  |    1 | The Kid from the Big Apple
+ tt4268632  |    1 | Episode #2.4
+ tt4268636  |    1 | Episode #2.5
+ tt4272464  |    1 | Dog Show Days Are Over/One Bad Apple
+ tt4304830  |    1 | Dark Intentions
+ tt4320098  |    1 | Backstage
+ tt4326894  |    1 | F Is for Family
+ tt4327586  |    1 | Tiki Torch-Ure
+ tt4347068  |    1 | God Send
+ tt4396662  |    1 | Liberty's Secret
+ tt4411618  |    1 | In Dubious Battle
+ tt4425064  |    1 | Steve Jobs: The Man in the Machine
+ tt4441008  |    1 | New York City
+ tt4463034  |    1 | Big Apple Hits Bondi
+ tt4499186  |    1 | Portrait of a Garden
+ tt4502720  |    1 | Let's Have Tea with Onee-chan!/The Witch, the Apple, and Onee-chan
+ tt4541436  |    1 | The Apple Doesn't Fall Far from the Tree
+ tt4542568  |    1 | Snow White with the Red Hair
+ tt4548332  |    1 | The Elite
+ tt4585810  |    1 | Lillemand
+ tt4598872  |    1 | Gaven
+ tt4599302  |    1 | Pussyquitter
+ tt4599354  |    1 | Små sko
+ tt4599392  |    1 | Miss Afrika
+ tt4599508  |    1 | Tæppegnasker
+ tt4600730  |    1 | Min søsters børn
+ tt4600744  |    1 | Mobbestopperen
+ tt4600762  |    1 | Eks'en
+ tt4603334  |    1 | Taking New York
+ tt4643086  |    1 | Ávaxtakarfan
+ tt4659056  |    1 | The Day Will Come
+ tt4684826  |    1 | Ashlynn's Fashion Frolic
+ tt4713882  |    1 | Kvinde Kend Dit Flop
+ tt4795464  |    1 | Sensitive
+ tt4848420  |    1 | Meet the Stewarts and Hamiltons
+ tt4882472  |    1 | Cyd and Shelby's Haunted Escape
+ tt4901798  |    1 | Andel Páne 2
+ tt4915318  |    1 | Cave
+ tt4968768  |    1 | Supernerd
+ tt4997858  |    1 | Risen: The Story of Chron 'Hell Razah' Smith
+ tt5003208  |    1 | Jake Gyllenhaal/Apple CEO Tim Cook/Run the Jewels & TV on the Radio
+ tt5078100  |    1 | The Apple of My Eye
+ tt5140556  |    1 | Wo de shi pian
+ tt5154068  |    1 | Unge lovende
+ tt5162612  |    1 | Episode #1.1
+ tt5170518  |    1 | Welcome to the Big Apple
+ tt5178200  |    1 | Episode #1.2
+ tt5180504  |    1 | The Witcher
+ tt5187970  |    1 | Episode #1.3
+ tt5188410  |    1 | Episode #1.4
+ tt5188502  |    1 | Episode #1.5
+ tt5189088  |    1 | Episode #1.6
+ tt5204400  |    1 | Thanksgiving's Just Around the Corner
+ tt5223426  |    1 | Food: Fact or Fiction?
+ tt5230624  |    1 | Chasing Banksy
+ tt5251118  |    1 | Raven's Tale: The Story of a Rebel
+ tt5271304  |    1 | Where the Windmills Are
+ tt5296686  |    1 | Fruit Rockers
+ tt5301060  |    1 | Anton90
+ tt5312240  |    1 | Episode #1.2
+ tt5323532  |    1 | Episode #1.3
+ tt5323538  |    1 | Episode #1.4
+ tt5323760  |    1 | Winter Brothers
+ tt5341062  |    1 | Episode #1.5
+ tt5341426  |    1 | Episode #1.6
+ tt5343258  |    1 | Episode #1.7
+ tt5343390  |    1 | Episode #1.8
+ tt5343492  |    1 | Episode #1.9
+ tt5371474  |    1 | Part Timers
+ tt5375058  |    1 | Hot and Raw
+ tt5375226  |    1 | Episode #1.10
+ tt5427958  |    1 | Apple's Tale: The Story of a Royal
+ tt5427962  |    1 | The Tale of Legacy Day
+ tt5428018  |    1 | The Day Ever After
+ tt5428022  |    1 | Replacing Raven
+ tt5428058  |    1 | Class Confusion
+ tt5428068  |    1 | Apple's Birthday Bake-Off
+ tt5462288  |    1 | Rockaway
+ tt5471340  |    1 | Hobophobic
+ tt5471344  |    1 | Periscope Revenge
+ tt5471346  |    1 | New Ian Sucks
+ tt5473806  |    1 | Gælden
+ tt5489500  |    1 | Bill Nye on Haters & Apple vs. The FBI
+ tt5492448  |    1 | Fan Fiction Fail
+ tt5525504  |    1 | Get Outta Here
+ tt5529998  |    1 | Encryption
+ tt5541362  |    1 | How to Date a Mom
+ tt5575196  |    1 | Worst Wedding Ever
+ tt5575342  |    1 | Twinkle Toes Lights Up New York
+ tt5579982  |    1 | Apple of My Eye
+ tt5591540  |    1 | We Used to Be Cool
+ tt5628418  |    1 | The Ash Lad: In the Hall of the Mountain King
+ tt5646208  |    1 | Breaking Mads
+ tt5651032  |    1 | Ride Upon the Storm
+ tt5679414  |    1 | Bad with Cooking and Bad with Bees
+ tt5686998  |    1 | Veteranbilen
+ tt5706894  |    1 | 8 Bit Generation: The Commodore Wars
+ tt5708222  |    1 | Bad Apples
+ tt5747954  |    1 | First Kiss Fail
+ tt5750932  |    1 | Life Inside Jail: Hell on Earth
+ tt5759196  |    1 | Home: Adventures with Tip & Oh
+ tt5763032  |    1 | Secret of Doomsday Mountain
+ tt5767436  |    1 | Ghost Sex
+ tt5775794  |    1 | Offer eller Spion?
+ tt5811240  |    1 | Episode #1.1
+ tt5814328  |    1 | Alle mod 1
+ tt5890754  |    1 | The Taste of Apple
+ tt5921134  |    1 | Underholdningsavdelingen
+ tt5921226  |    1 | Party of Slumber/Paranoid Activity
+ tt5932634  |    1 | Little Yellow Bird
+ tt5944390  |    1 | Rachel Unraveled
+ tt5956006  |    1 | Love Off the Cuff
+ tt5996480  |    1 | Episode #2.1
+ tt6002176  |    1 | Episode #2.2
+ tt6002178  |    1 | Episode #2.3
+ tt6002180  |    1 | Episode #2.4
+ tt6002182  |    1 | Episode #2.5
+ tt6002186  |    1 | Episode #2.6
+ tt6002188  |    1 | Episode #2.7
+ tt6002190  |    1 | Episode #2.8
+ tt6002192  |    1 | Episode #2.9
+ tt6002194  |    1 | Episode #2.10
+ tt6034730  |    1 | Lisenskontrolløren
+ tt6056416  |    1 | Barbecue in the Big Apple
+ tt6058498  |    1 | Yes No Maybe
+ tt6073524  |    1 | Save Brony Fandom
+ tt6101946  |    1 | Wizards of the Lost Kingdom II
+ tt6104020  |    1 | New York
+ tt6114472  |    1 | Loss
+ tt6114500  |    1 | Apple & Onion
+ tt6179276  |    1 | Needle Boy
+ tt6190908  |    1 | Hugo På Bas
+ tt6206408  |    1 | 'Du må ikke have andre guder end mig' - Exodus 20:3
+ tt6206412  |    1 | 'Du må ikke misbruge Herren din Guds navn' - Exodus 20:7
+ tt6206414  |    1 | 'Tre ting kan ikke forblive skjult længe Solen, Månen og Sandheden' - Buddha
+ tt6206416  |    1 | 'Du bliver ikke straffet for din vrede. Du bliver straffet af din vrede' - Buddha
+ tt6206420  |    1 | 'Og led os ikke ind i fristelse, men fri os fra det onde' - Matthew 6:13
+ tt6206422  |    1 | 'Min Gud, Min Gud! Hvorfor har du forladt mig?' - Matthew 27:46
+ tt6206424  |    1 | 'Vi er som den klare måne, alle har vi en mørk side' - Kahlil Gibran
+ tt6206426  |    1 | 'Den, som går forbi sin næste, går også forbi Gud' - Martin Luther
+ tt6206428  |    1 | 'Spørg ikke, hvem klokkerne ringer for. De ringer for dig' - John Donne
+ tt6206430  |    1 | 'Det er fuldbragt' - Jesus - John 19:30
+ tt6232500  |    1 | The Child Soldier's New Job
+ tt6268334  |    1 | Mukhosh Manush
+ tt6271090  |    1 | The Apple
+ tt6283126  |    1 | Diners, Drive-ins and Dives Tournament 2: Part 2
+ tt6283978  |    1 | Episode #2.1
+ tt6283980  |    1 | Episode #2.2
+ tt6283982  |    1 | Episode #2.3
+ tt6283984  |    1 | Episode #2.4
+ tt6283986  |    1 | Episode #2.5
+ tt6283988  |    1 | Episode #2.6
+ tt6286796  |    1 | A Horrible Woman
+ tt6315598  |    1 | Mergers and Inquisitions
+ tt6335268  |    1 | The Big What If
+ tt6354108  |    1 | Self-Criticism of a Bourgeois Dog
+ tt6383302  |    1 | Bone of Contention
+ tt6398570  |    1 | Viva Amiga
+ tt6411648  |    1 | Bad Apple!!
+ tt6439492  |    1 | Every [Blank] Ever
+ tt6441102  |    1 | Complicit
+ tt6469344  |    1 | Epiphany
+ tt6546046  |    1 | Sing Along with Tobee
+ tt6585674  |    1 | Easy to Learn, Hard to Master: The Fate of Atari
+ tt6600756  |    1 | I Thought We Were Friends!
+ tt6619592  |    1 | Stranded with a Million Dollars
+ tt6625830  |    1 | Game of Drones
+ tt6625832  |    1 | Group Bye
+ tt6625834  |    1 | Stirring the Pot
+ tt6625836  |    1 | In-Tents
+ tt6704066  |    1 | The Great European Cigarette Mystery
+ tt6732148  |    1 | Historien om Danmark
+ tt6743002  |    1 | Stenalder
+ tt6743100  |    1 | Metallernes tid
+ tt6829288  |    1 | Tidlig middelalder
+ tt6849020  |    1 | Everyday Struggle
+ tt6849786  |    1 | General Magic
+ tt6889310  |    1 | Dhaani
+ tt6896488  |    1 | Apple Tree House
+ tt6910670  |    1 | Far from the Apple Tree
+ tt7005636  |    1 | Lykkeland
+ tt7010412  |    1 | The Great Buddha +
+ tt7056528  |    1 | It's Complicated
+ tt7061840  |    1 | Ginger Snaps
+ tt7123236  |    1 | Detective Jimmy Apple
+ tt7124694  |    1 | Banglar Bodhu
+ tt7134124  |    1 | Homecoming
+ tt7140998  |    1 | The Information Age
+ tt7147976  |    1 | Idioten
+ tt7178568  |    1 | Off the Tracks
+ tt7247724  |    1 | 3 Amigonauts
+ tt7305820  |    1 | Past and Present
+ tt7313322  |    1 | Alpha and Omega
+ tt7316968  |    1 | Bikini Valley Car Wash
+ tt7339938  |    1 | You Are the Apple of My Eye
+ tt7370220  |    1 | Porno Leif
+ tt7388694  |    1 | La manzana de Eva
+ tt7424396  |    1 | Denmark
+ tt7466496  |    1 | Apple Seed
+ tt7469978  |    1 | Ah Boys to Men 4
+ tt7478442  |    1 | The Beatles, Hippies and Hells Angels: Inside the Crazy World of Apple
+ tt7488532  |    1 | Für Umme - Die Serie
+ tt7524390  |    1 | Apple
+ tt7551252  |    1 | The Kid from the Big Apple: Before We Forget
+ tt7655142  |    1 | St. Bernard Syndicate
+ tt7694874  |    1 | Pros and Cons
+ tt7732486  |    1 | WHAT IF? A (Fan-Made) 'Life is Strange' Story
+ tt7752360  |    1 | Dolomite, Apple Slices, and a Mystery Woman
+ tt7766104  |    1 | Home Ground
+ tt7850966  |    1 | Big Trouble in the Big Apple
+ tt7875794  |    1 | Wisting
+ tt7913384  |    1 | Martin og Mikkelsen
+ tt7947470  |    1 | That Time of Year
+ tt8008664  |    1 | Doel
+ tt8019790  |    1 | Apple & Onion
+ tt8034832  |    1 | A New Life
+ tt8034842  |    1 | The Perfect Team
+ tt8041274  |    1 | The Significant Other
+ tt8060454  |    1 | Helt Perfekt
+ tt8064322  |    1 | Tips
+ tt8064326  |    1 | Falafel's Fun Day
+ tt8071662  |    1 | The End's Beginning
+ tt8075996  |    1 | Khauff Begins... Ringa Ringa Roses
+ tt8092650  |    1 | Tæt på sandheden med Jonathan Spang
+ tt8096850  |    1 | 4 on 1
+ tt8096858  |    1 | Apple's in Trouble
+ tt8134190  |    1 | Hot Dog's Movie Premiere
+ tt8134194  |    1 | Bottle Catch
+ tt8141832  |    1 | Pancake's Bus Tour
+ tt8141834  |    1 | Block Party
+ tt8150950  |    1 | YouTuber trainwreck.
+ tt8240940  |    1 | Killer Not Stupid
+ tt8253000  |    1 | The poisoned Apple and the Princess
+ tt8287950  |    1 | Bonacini's Italy
+ tt8346546  |    1 | Love Notes to Newton
+ tt8367050  |    1 | Chedeng and Apple
+ tt8391976  |    1 | Bungo Stray Dogs: Dead Apple
+ tt8419052  |    1 | 100% Coco New York
+ tt8422806  |    1 | My Little Pony Equestria Girls: Summertime Shorts
+ tt8424012  |    1 | The Canterlot Movie Club
+ tt8463428  |    1 | Play Dead
+ tt8490960  |    1 | Spårtsklubben
+ tt8499924  |    1 | Episode #1.3
+ tt8665122  |    1 | The i Decade
+ tt8723928  |    1 | Big Bad Love/The Milk Job
+ tt8723930  |    1 | Once Upon a Girl Day/Cop College
+ tt8753438  |    1 | Askeladden - I Soria Moria slott
+ tt8835200  |    1 | The In-Between
+ tt8879588  |    1 | Mind Game
+ tt8883524  |    1 | Bloodline
+ tt8884154  |    1 | Asking for a Friend
+ tt8884430  |    1 | Echo in the Canyon
+ tt8948132  |    1 | Into the Darkness
+ tt8998634  |    1 | Maid in Hell
+ tt9004986  |    1 | Syndebukken: Prosessen mot Harry Lindstrøm
+ tt9060834  |    1 | Episode #1.1
+ tt9060836  |    1 | Episode #1.2
+ tt9060838  |    1 | Episode #1.3
+ tt9060840  |    1 | Episode #1.4
+ tt9060844  |    1 | Episode #1.5
+ tt9074110  |    1 | Mads Holger - Til farvel
+ tt9091304  |    1 | Your Rival Is Your Partner's Partner!
+ tt9110378  |    1 | Kazoku no Hanashi
+ tt9150630  |    1 | Markets
+ tt9155496  |    1 | Wrigley Friends
+ tt9216318  |    1 | Broke
+ tt9352780  |    1 | Cold Case Hammarskjöld
+ tt9415584  |    1 | Klaphat
+ tt9460980  |    1 | Sunday
+ tt9466596  |    1 | Darkness - Those Who Kill
+ tt9466726  |    1 | Episode #1.1
+ tt9466822  |    1 | Episode #1.5
+ tt9615690  |    1 | Episode #1.3
+ tt9695118  |    1 | Face to Face
+ tt9759754  |    1 | Apple of My Eye
+ tt9761326  |    1 | Episode #1.1
+ tt9762106  |    1 | Episode #1.6
+ tt9762108  |    1 | Episode #1.7
+ tt9764036  |    1 | Episode #1.6
+ tt9764038  |    1 | Episode #1.7
+ tt9764044  |    1 | Episode #1.8
+ tt9772904  |    1 | Episode #1.4
+ tt9796246  |    1 | Stolt fortid, stor framtid
+ tt9828696  |    1 | Ao-chan Can't Study
+ tt0015768  |    1 | Master of the House
+ tt9871930  |    1 | Sviræv
+ tt0023702  |    1 | The Wiser Sex
+ tt0024240  |    1 | Lady for a Day
+ tt0029583  |    1 | Snow White and the Seven Dwarfs
+ tt0031754  |    1 | On Borrowed Time
+ tt0041716  |    1 | On the Town
+ tt0051343  |    1 | Pathetic Fallacy
+ tt0052083  |    1 | Lydia Ate the Apple
+ tt0055312  |    1 | Pocketful of Miracles
+ tt0070917  |    1 | The Wicker Man
+ tt0080335  |    1 | Afternoon Breezes
+ tt0081546  |    1 | Poseban tretman
+ tt0103708  |    1 | Apple Trees
+ tt0107206  |    1 | In the Line of Fire
+ tt0122073  |    1 | Fra den gamle Købmandsgaard
+ tt0123281  |    1 | The Stranger
+ tt0124315  |    1 | The Cider House Rules
+ tt0143231  |    1 | The Dybbuk of the Holy Apple Field
+ tt0156901  |    1 | The Apple
+ tt0158585  |    1 | Dharmputra
+ tt0158845  |    1 | Pati Patni Aur Woh
+ tt0192459  |    1 | The Apple
+ tt0248963  |    1 | Lips to Lips
+ tt0255105  |    1 | Der findes ingen tamme dyr
+ tt0285676  |    1 | Like a Horse
+ tt0288861  |    1 | Godforsaken
+ tt0328803  |    1 | 1700 Metres from the Future
+ tt0339723  |    1 | The Star Dreamer
+ tt0344944  |    1 | Bobo Cop
+ tt0373432  |    1 | Wait a Minute
+ tt0378906  |    1 | Travelers and Magicians
+ tt0386752  |    1 | Rocket Brothers
+ tt0406282  |    1 | Bubbles
+ tt0417459  |    1 | Back to Manhattan
+ tt0420900  |    1 | Neon Genesis Evangelion: Girlfriend of Steel
+ tt0428441  |    1 | The Cutting Edge: The Magic of Movie Editing
+ tt0434311  |    1 | Roman Rapido
+ tt0439704  |    1 | Milk Can
+ tt0449056  |    1 | Lick an Apple Like a Pussy: The Movie Stanislawski Never Made
+ tt0495865  |    1 | Nandini
+ tt0758433  |    1 | The Person de Leo N.
+ tt0765125  |    1 | Noget om Halfdan
+ tt0788133  |    1 | Holiday Dreaming
+ tt0790713  |    1 | The Minority
+ tt0924510  |    1 | Largo
+ tt10062166 |    1 | Episode #1.6
+ tt10062170 |    1 | Episode #1.8
+ tt10069398 |    1 | Home for Christmas
+ tt10081702 |    1 | De 12 van Schouwendam
+ tt10237790 |    1 | Deliver Us
+ tt10241582 |    1 | Kongernes fald
+ tt10274432 |    1 | Mrs. Baskets Goes to Sacramento
+ tt10283234 |    1 | Ratrir Jatri
+ tt1040004  |    1 | Seducer's Fall
+ tt10529294 |    1 | U-Prince: The Single Lawyer
+ tt10628006 |    1 | Happy Endings Sleepover
+ tt1076871  |    1 | Turn Back Time
+ tt10846312 |    1 | Witch Hunt
+ tt1086835  |    1 | Have You Another Apple?
+ tt10947960 |    1 | Bad Apple
+(595 rows)
+
+
+-- Test case D.12b: find ranked titles with single paramter by using VARIADIC array
+SELECT * FROM dynamic_bestmatch('apple');
+   tconst   | rank |                                 title                                  
+------------+------+------------------------------------------------------------------------
+ tt0023702  |    1 | The Wiser Sex
+ tt0024240  |    1 | Lady for a Day
+ tt0029583  |    1 | Snow White and the Seven Dwarfs
+ tt0031754  |    1 | On Borrowed Time
+ tt0041716  |    1 | On the Town
+ tt0051343  |    1 | Pathetic Fallacy
+ tt0052083  |    1 | Lydia Ate the Apple
+ tt0055312  |    1 | Pocketful of Miracles
+ tt0070917  |    1 | The Wicker Man
+ tt0080335  |    1 | Afternoon Breezes
+ tt0081546  |    1 | Poseban tretman
+ tt0103708  |    1 | Apple Trees
+ tt0107206  |    1 | In the Line of Fire
+ tt0123281  |    1 | The Stranger
+ tt0124315  |    1 | The Cider House Rules
+ tt0143231  |    1 | The Dybbuk of the Holy Apple Field
+ tt0156901  |    1 | The Apple
+ tt0158585  |    1 | Dharmputra
+ tt0158845  |    1 | Pati Patni Aur Woh
+ tt0192459  |    1 | The Apple
+ tt0248963  |    1 | Lips to Lips
+ tt0285676  |    1 | Like a Horse
+ tt0344944  |    1 | Bobo Cop
+ tt0373432  |    1 | Wait a Minute
+ tt0378906  |    1 | Travelers and Magicians
+ tt0417459  |    1 | Back to Manhattan
+ tt0418455  |    1 | Adam's Apples
+ tt0420900  |    1 | Neon Genesis Evangelion: Girlfriend of Steel
+ tt0428441  |    1 | The Cutting Edge: The Magic of Movie Editing
+ tt0434311  |    1 | Roman Rapido
+ tt0449056  |    1 | Lick an Apple Like a Pussy: The Movie Stanislawski Never Made
+ tt0758433  |    1 | The Person de Leo N.
+ tt0788133  |    1 | Holiday Dreaming
+ tt0790713  |    1 | The Minority
+ tt0924510  |    1 | Largo
+ tt10274432 |    1 | Mrs. Baskets Goes to Sacramento
+ tt10283234 |    1 | Ratrir Jatri
+ tt10529294 |    1 | U-Prince: The Single Lawyer
+ tt1086835  |    1 | Have You Another Apple?
+ tt10947960 |    1 | Bad Apple
+ tt10980364 |    1 | Streaming Wars! Who Will Win Your Attention?
+ tt11487192 |    1 | Jennifer Aniston
+ tt12164018 |    1 | Movies That Changed My Life
+ tt1220905  |    1 | Sour Apple Freeze Pop
+ tt1277953  |    1 | Madagascar 3: Europe's Most Wanted
+ tt12845242 |    1 | Village of Lost Children
+ tt1326214  |    1 | Downtown Calling
+ tt1385513  |    1 | The Distance Between the Apple and the Tree
+ tt1422093  |    1 | Mom's Apple Pie: The Heart of the Lesbian Mothers' Custody Movement
+ tt1568292  |    1 | The Buffalo Son
+ tt1584923  |    1 | Brute Force
+ tt1650393  |    1 | C.O.G.
+ tt1657510  |    1 | Gimme Shelter
+ tt1734475  |    1 | Pete & Cleo
+ tt1784493  |    1 | King for Two Days
+ tt1854312  |    1 | Music
+ tt1920849  |    1 | Bachelorette
+ tt1935229  |    1 | Siodmak
+ tt1937118  |    1 | Chinese Puzzle
+ tt1985966  |    1 | Cloudy With a Chance of Meatballs 2
+ tt2036416  |    1 | You Are the Apple of My Eye
+ tt2057918  |    1 | Call It a Balance in the Unbalance
+ tt2080374  |    1 | Steve Jobs
+ tt2104994  |    1 | Steve Jobs: The Lost Interview
+ tt2106557  |    1 | Invisible World
+ tt2107835  |    1 | The Skinny
+ tt2132321  |    1 | Eden
+ tt2139919  |    1 | Gimme the Loot
+ tt2140403  |    1 | Slaughter Daughter
+ tt2158455  |    1 | The Taste of Apple Seeds
+ tt2187099  |    1 | Terror Vortex
+ tt2219554  |    1 | Megalomania
+ tt2265431  |    1 | Me You and Five Bucks
+ tt2290127  |    1 | Apples of the Golan
+ tt2330912  |    1 | Macross Plus Movie Edition
+ tt2342071  |    1 | Dorothy and the Witches of Oz
+ tt2359121  |    1 | Miracle Apples
+ tt2510016  |    1 | The Us Festival 1982: The US Generation Documentary
+ tt2510894  |    1 | Hotel Transylvania 2
+ tt2523752  |    1 | Nerd vs. Geek
+ tt2583190  |    1 | MENSAX
+ tt2583198  |    1 | Game Night
+ tt2672162  |    1 | Apple Stories
+ tt2675318  |    1 | Devils of War
+ tt2836568  |    1 | Det røde eplet
+ tt2896000  |    1 | Kailangan ko'y ikaw
+ tt2924742  |    1 | Spring Never Comes
+ tt2931864  |    1 | Federico García Lorca Noir Despair
+ tt2990116  |    1 | Run DMZ
+ tt2996228  |    1 | John Apple Jack
+ tt3013332  |    1 | Steve Jobs: Consciously Genius
+ tt3031694  |    1 | Risky Listing
+ tt3054410  |    1 | Etgar Keret: What Animal Are You?
+ tt3107224  |    1 | Mother Up!
+ tt3219512  |    1 | Pilot
+ tt3219678  |    1 | A Brony Tale
+ tt3230958  |    1 | Shoe I Am
+ tt3246178  |    1 | Everybody Sees 2Bit's Wang
+ tt3246184  |    1 | Say Hello to My Landscaper Friend
+ tt3246186  |    1 | Overnight Delight
+ tt3312378  |    1 | Ever After High
+ tt3457208  |    1 | Filmpje
+ tt3469518  |    1 | The Whole Shebang
+ tt3480908  |    1 | Amamiyot
+ tt3528728  |    1 | Shrub It In
+ tt3575044  |    1 | Welcome to New York!
+ tt3594330  |    1 | The Patron
+ tt3602460  |    1 | Accident
+ tt3604054  |    1 | The Big Apple
+ tt3615116  |    1 | Paradise Hotel
+ tt3665804  |    1 | Hallo New York
+ tt3672742  |    1 | Turbo Kid
+ tt3691474  |    1 | The Mysteries of Science
+ tt3729162  |    1 | Mississippi Delta
+ tt3823930  |    1 | Cold Feet
+ tt3824440  |    1 | Resolutions and Revelations
+ tt3846542  |    1 | And the Apple of Discord
+ tt3847964  |    1 | Candy Apple
+ tt3877346  |    1 | Apple in Your Eye
+ tt3951732  |    1 | Chalk It Up
+ tt3978500  |    1 | Skinny Legs Sketch Show
+ tt4046102  |    1 | The Permaculture Orchard: Beyond Organic
+ tt4060962  |    1 | A Stand Up Guy
+ tt4109364  |    1 | Cubed
+ tt4129894  |    1 | Big Apple Blowup
+ tt4171252  |    1 | Apple Pie: Yummy Adventures in Hi-8
+ tt4183398  |    1 | Like, Share, Die
+ tt4190500  |    1 | The World of Ever After High
+ tt4253116  |    1 | The Kid from the Big Apple
+ tt4272464  |    1 | Dog Show Days Are Over/One Bad Apple
+ tt4326894  |    1 | F Is for Family
+ tt4327586  |    1 | Tiki Torch-Ure
+ tt4347068  |    1 | God Send
+ tt4396662  |    1 | Liberty's Secret
+ tt4411618  |    1 | In Dubious Battle
+ tt4425064  |    1 | Steve Jobs: The Man in the Machine
+ tt4441008  |    1 | New York City
+ tt4463034  |    1 | Big Apple Hits Bondi
+ tt4499186  |    1 | Portrait of a Garden
+ tt4502720  |    1 | Let's Have Tea with Onee-chan!/The Witch, the Apple, and Onee-chan
+ tt4541436  |    1 | The Apple Doesn't Fall Far from the Tree
+ tt4542568  |    1 | Snow White with the Red Hair
+ tt4603334  |    1 | Taking New York
+ tt4643086  |    1 | Ávaxtakarfan
+ tt4684826  |    1 | Ashlynn's Fashion Frolic
+ tt4795464  |    1 | Sensitive
+ tt4882472  |    1 | Cyd and Shelby's Haunted Escape
+ tt4901798  |    1 | Andel Páne 2
+ tt4997858  |    1 | Risen: The Story of Chron 'Hell Razah' Smith
+ tt5003208  |    1 | Jake Gyllenhaal/Apple CEO Tim Cook/Run the Jewels & TV on the Radio
+ tt5078100  |    1 | The Apple of My Eye
+ tt5140556  |    1 | Wo de shi pian
+ tt5170518  |    1 | Welcome to the Big Apple
+ tt5204400  |    1 | Thanksgiving's Just Around the Corner
+ tt5223426  |    1 | Food: Fact or Fiction?
+ tt5230624  |    1 | Chasing Banksy
+ tt5251118  |    1 | Raven's Tale: The Story of a Rebel
+ tt5296686  |    1 | Fruit Rockers
+ tt5427958  |    1 | Apple's Tale: The Story of a Royal
+ tt5427962  |    1 | The Tale of Legacy Day
+ tt5428018  |    1 | The Day Ever After
+ tt5428022  |    1 | Replacing Raven
+ tt5428058  |    1 | Class Confusion
+ tt5428068  |    1 | Apple's Birthday Bake-Off
+ tt5462288  |    1 | Rockaway
+ tt5489500  |    1 | Bill Nye on Haters & Apple vs. The FBI
+ tt5525504  |    1 | Get Outta Here
+ tt5529998  |    1 | Encryption
+ tt5575342  |    1 | Twinkle Toes Lights Up New York
+ tt5579982  |    1 | Apple of My Eye
+ tt5591540  |    1 | We Used to Be Cool
+ tt5679414  |    1 | Bad with Cooking and Bad with Bees
+ tt5706894  |    1 | 8 Bit Generation: The Commodore Wars
+ tt5708222  |    1 | Bad Apples
+ tt5750932  |    1 | Life Inside Jail: Hell on Earth
+ tt5759196  |    1 | Home: Adventures with Tip & Oh
+ tt5763032  |    1 | Secret of Doomsday Mountain
+ tt5811240  |    1 | Episode #1.1
+ tt5890754  |    1 | The Taste of Apple
+ tt5921226  |    1 | Party of Slumber/Paranoid Activity
+ tt5932634  |    1 | Little Yellow Bird
+ tt5944390  |    1 | Rachel Unraveled
+ tt5956006  |    1 | Love Off the Cuff
+ tt6056416  |    1 | Barbecue in the Big Apple
+ tt6073524  |    1 | Save Brony Fandom
+ tt6104020  |    1 | New York
+ tt6114472  |    1 | Loss
+ tt6114500  |    1 | Apple & Onion
+ tt6268334  |    1 | Mukhosh Manush
+ tt6271090  |    1 | The Apple
+ tt6283126  |    1 | Diners, Drive-ins and Dives Tournament 2: Part 2
+ tt6315598  |    1 | Mergers and Inquisitions
+ tt6335268  |    1 | The Big What If
+ tt6354108  |    1 | Self-Criticism of a Bourgeois Dog
+ tt6398570  |    1 | Viva Amiga
+ tt6411648  |    1 | Bad Apple!!
+ tt6439492  |    1 | Every [Blank] Ever
+ tt6441102  |    1 | Complicit
+ tt6469344  |    1 | Epiphany
+ tt6546046  |    1 | Sing Along with Tobee
+ tt6585674  |    1 | Easy to Learn, Hard to Master: The Fate of Atari
+ tt6600756  |    1 | I Thought We Were Friends!
+ tt6619592  |    1 | Stranded with a Million Dollars
+ tt6625830  |    1 | Game of Drones
+ tt6625832  |    1 | Group Bye
+ tt6625834  |    1 | Stirring the Pot
+ tt6625836  |    1 | In-Tents
+ tt6849020  |    1 | Everyday Struggle
+ tt6849786  |    1 | General Magic
+ tt6889310  |    1 | Dhaani
+ tt6896488  |    1 | Apple Tree House
+ tt6910670  |    1 | Far from the Apple Tree
+ tt7010412  |    1 | The Great Buddha +
+ tt7061840  |    1 | Ginger Snaps
+ tt7123236  |    1 | Detective Jimmy Apple
+ tt7124694  |    1 | Banglar Bodhu
+ tt7140998  |    1 | The Information Age
+ tt7178568  |    1 | Off the Tracks
+ tt7247724  |    1 | 3 Amigonauts
+ tt7316968  |    1 | Bikini Valley Car Wash
+ tt7339938  |    1 | You Are the Apple of My Eye
+ tt7388694  |    1 | La manzana de Eva
+ tt7466496  |    1 | Apple Seed
+ tt7469978  |    1 | Ah Boys to Men 4
+ tt7478442  |    1 | The Beatles, Hippies and Hells Angels: Inside the Crazy World of Apple
+ tt7524390  |    1 | Apple
+ tt7551252  |    1 | The Kid from the Big Apple: Before We Forget
+ tt7752360  |    1 | Dolomite, Apple Slices, and a Mystery Woman
+ tt7850966  |    1 | Big Trouble in the Big Apple
+ tt8019790  |    1 | Apple & Onion
+ tt8034832  |    1 | A New Life
+ tt8034842  |    1 | The Perfect Team
+ tt8041274  |    1 | The Significant Other
+ tt8064322  |    1 | Tips
+ tt8064326  |    1 | Falafel's Fun Day
+ tt8075996  |    1 | Khauff Begins... Ringa Ringa Roses
+ tt8096850  |    1 | 4 on 1
+ tt8096858  |    1 | Apple's in Trouble
+ tt8134190  |    1 | Hot Dog's Movie Premiere
+ tt8134194  |    1 | Bottle Catch
+ tt8141832  |    1 | Pancake's Bus Tour
+ tt8141834  |    1 | Block Party
+ tt8150950  |    1 | YouTuber trainwreck.
+ tt8240940  |    1 | Killer Not Stupid
+ tt8253000  |    1 | The poisoned Apple and the Princess
+ tt8287950  |    1 | Bonacini's Italy
+ tt8346546  |    1 | Love Notes to Newton
+ tt8367050  |    1 | Chedeng and Apple
+ tt8391976  |    1 | Bungo Stray Dogs: Dead Apple
+ tt8419052  |    1 | 100% Coco New York
+ tt8422806  |    1 | My Little Pony Equestria Girls: Summertime Shorts
+ tt8424012  |    1 | The Canterlot Movie Club
+ tt8665122  |    1 | The i Decade
+ tt8723928  |    1 | Big Bad Love/The Milk Job
+ tt8723930  |    1 | Once Upon a Girl Day/Cop College
+ tt8879588  |    1 | Mind Game
+ tt8883524  |    1 | Bloodline
+ tt8884154  |    1 | Asking for a Friend
+ tt8884430  |    1 | Echo in the Canyon
+ tt9091304  |    1 | Your Rival Is Your Partner's Partner!
+ tt9110378  |    1 | Kazoku no Hanashi
+ tt9150630  |    1 | Markets
+ tt9155496  |    1 | Wrigley Friends
+ tt9759754  |    1 | Apple of My Eye
+ tt9828696  |    1 | Ao-chan Can't Study
+(265 rows)
+
+
+-- D.13
+-- no solution
+-- D.14
+-- no solution
+-- D.15
+-- no solution

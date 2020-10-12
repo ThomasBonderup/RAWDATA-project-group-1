@@ -15,4 +15,4 @@ psql -U postgres -d raw1 -f dummyData.sql
 
 psql -U postgres -d raw1 -f code_script.sql
 
-psql -U postgres -d raw1 -a -f test_script.sql > /tmp/test_output.txt
+psql -U postgres -d raw1 -a -f test_script.sql > test_output.txt
