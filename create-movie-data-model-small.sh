@@ -12,3 +12,5 @@ psql -U postgres -d raw1_small -f B2_build_movie_db.sql
 psql -U postgres -d raw1_small -f C2_build_framework_db.sql
 
 psql -U postgres -d raw1_small -f dummyData.sql
+
+psql -U postgres -d raw1_small -f code_script.sql

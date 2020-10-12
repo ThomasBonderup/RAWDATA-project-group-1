@@ -7,21 +7,21 @@ SELECT add_user('ui000007', 'Test', 'User 07', 'test07@test.dk', '07pw', 'testus
 SELECT update_user('ui000007', 'Test', 'Test 07.2', 'test07.2@test.dk', '07.2pw', 'testuser07.2');
 SELECT delete_user('ui000007');
 -- Test cases for title bookmarks
-SELECT add_title_bookmark('ui000002', 'tt0974011');
-SELECT delete_title_bookmark('ui000002', 'tt0974011');
+SELECT add_title_bookmark('ui000002', 'tt9999991');
+SELECT delete_title_bookmark('ui000002', 'tt9999991');
 SELECT * from get_title_bookmarks('ui000002');
 -- Test cases for name bookmarks
 SELECT add_name_bookmark('ui000002', 'nm3800107');
 SELECT delete_name_bookmark('ui000002', 'nm3800107');
 SELECT * from get_name_bookmarks('ui000002');
 -- Test cases for title notes
-SELECT add_title_notes('ui000002', 'tt0974011', 'This is a note lets see what i can write here 123, ***');
-SELECT update_title_notes('ui000002', 'tt0974011', 'this is the updated title note');
-SELECT delete_title_notes('ui000002', 'tt0974011');
+SELECT add_title_notes('ui000002', 'tt9999991', 'This is a note lets see what i can write here 123, ***');
+SELECT update_title_notes('ui000002', 'tt9999991', 'this is the updated title note');
+SELECT delete_title_notes('ui000002', 'tt9999991');
 SELECT * from get_title_notes('ui000002');
 -- Test cases for name notes
 SELECT add_name_notes('ui000002', 'nm3800107', 'OG name note');
-SELECT update_name_notes('ui000002', 'nm3800107', 'this is the updated name note');
+SELECT update_name_notes('ui000002', 'tt9999991', 'this is the updated name note');
 SELECT delete_name_notes('ui000002', 'nm3800107');
 SELECT * from get_name_notes('ui000002');
 -- Test case for get search history
@@ -40,52 +40,52 @@ SELECT * FROM search_history;
 
 -- D.3
 
--- Test case: Inserting a new (random) title rating to generate name ratings which is a trigger function 
--- We should make an initial generate function as well, that isn't a trigger. 
-SELECT ins_user_rating('ui000001', 'tt0169084', 7);
+-- Test case: Inserting a new (random) title rating to generate name ratings which is a trigger function
+-- We should make an initial generate function as well, that isn't a trigger.
+SELECT ins_user_rating('ui000001', 'tt9999996', 7);
 
--- Test case: Displaying the name rating of an actor, to show that this will be updated alongside a title rating 
+-- Test case: Displaying the name rating of an actor, to show that this will be updated alongside a title rating
 SELECT *
 FROM name_rating
-WHERE nconst = 'nm1449677';
+WHERE nconst = 'nm99999999';
 
 -- Test case: Inserting a title rating on a movie which "stars" nm1449677 to see that his name rating changes
-SELECT ins_user_rating('ui000001', 'tt0323536', 1);
+SELECT ins_user_rating('ui000002', 'tt9999999', 1);
 
--- Test case: Showing that the name_rating of nm1449677 has changed 
+-- Test case: Showing that the name_rating of nm1449677 has changed
 SELECT *
 FROM name_rating
-WHERE nconst = 'nm1449677';
+WHERE nconst = 'nm99999999';
 
--- Test case: Updating a rating from the same user on the same movie.  
+-- Test case: Updating a rating from the same user on the same movie.
 -- The old rating will be subtracted from the average title rating and the new value will be updated.
-SELECT upd_user_rating('ui000001', 'tt0323536', 10);
+SELECT upd_user_rating('ui000001', 'tt9999999', 10);
 
 
 -- Test case: Testing insert on user rating with review
-SELECT ins_user_rating('ui000001', 'tt11097072', 8, 'Greatest movie I ever watched');
+SELECT ins_user_rating('ui000001', 'tt9999994', 8, 'Greatest movie I ever watched');
 
 -- Test case: Showing the result ofthe query above
 SELECT *
 FROM rating
-WHERE tconst = 'tt11097072'  AND uconst = 'ui000001';
+WHERE tconst = 'tt9999994'  AND uconst = 'ui000001';
 
 -- Test case: Showing that the rating history is updated with inserts
 SELECT *
-FROM rating_history 
+FROM rating_history
 WHERE uconst = 'ui000001';
 
 -- Test case: Testing update on user ratings with review
-SELECT upd_user_rating('ui000001', 'tt11097072', 4, 'I watched it again and changed my mind');
+SELECT upd_user_rating('ui000001', 'tt9999998', 4, 'I watched it again and changed my mind');
 
 -- Test case: Showing the result ofthe query above
 SELECT *
 FROM rating
-WHERE tconst = 'tt11097072'  AND uconst = 'ui000001';
+WHERE tconst = 'tt9999998'  AND uconst = 'ui000001';
 
 -- Test case: Showing that the rating history is updated with updates on title ratings
 SELECT *
-FROM rating_history 
+FROM rating_history
 WHERE uconst = 'ui000001';
 
 
