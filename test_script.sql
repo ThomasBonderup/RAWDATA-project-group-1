@@ -40,6 +40,47 @@ SELECT * FROM search_history;
 
 -- D.3
 
+-- Test case: Inserting a new (random) title rating to generate name ratings which is a trigger function 
+-- We should make an initial generate function as well, that isn't a trigger. 
+SELECT ins_user_rating('ui000001', 'tt0169084', 7);
+
+-- Test case: Displaying the name rating of an actor, to show that this will be updated alongside a title rating 
+SELECT *
+FROM name_rating
+WHERE nconst = 'nm1449677';
+
+-- Test case: Inserting a title rating on a movie which "stars" nm1449677 to see that his name rating changes
+SELECT ins_user_rating('ui000001', 'tt0323536', 1);
+
+-- Test case: Showing that the name_rating of nm1449677 has changed 
+SELECT *
+FROM name_rating
+WHERE nconst = 'nm1449677';
+
+-- Test case: Updating a rating from the same user on the same movie.  
+-- The old rating will be subtracted from the average title rating and the new value will be updated.
+SELECT upd_user_rating('ui000001', 'tt0323536', 10);
+
+
+-- Test case: Testing insert on user rating with review
+SELECT ins_user_rating('ui000001', 'tt11097072', 8, 'Greatest movie I ever watched');
+
+-- Test case: Showing the result ofthe query above
+SELECT *
+FROM rating
+WHERE tconst = 'tt11097072'  AND uconst = 'ui000001';
+
+-- Test case: Testing update on user ratings with review
+SELECT upd_user_rating('ui000001', 'tt11097072', 4, 'I watched it again and changed my mind');
+
+-- Test case: Showing the result ofthe query above
+SELECT *
+FROM rating
+WHERE tconst = 'tt11097072'  AND uconst = 'ui000001';
+
+
+
+
 -- D.4 Structured String Search
 -- Test case: find all movies with structured search with 4 parameters,
 -- 	      title name, plot, characters and name,
