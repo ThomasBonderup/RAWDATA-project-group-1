@@ -3,173 +3,10 @@
 -- B.2 Creating tables
 --
 
-DROP SCHEMA IF EXISTS movie_data_model CASCADE;
-
-CREATE SCHEMA movie_data_model;
-
-SET search_path TO movie_data_model;
-
---
--- Name: title; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE movie_data_model.title (
-    tconst character(10),
-    titletype character varying(20),
-    primarytitle text,
-    originaltitle text,
-    isadult boolean,
-    startyear character(4),
-    endyear character(4),
-    runtimeminutes integer,
-    poster character varying(256),
-    awards text,
-    plot text,
-    primary key (tconst)
-);
-
-ALTER TABLE movie_data_model.title OWNER TO raw1;
-
---
--- Name: title_genres; Type: TABLE; Schema: movie_data_model; Owner: postgres
---
-
-CREATE TABLE movie_data_model.title_genres (
-    tconst character(10),
-    genre character varying(20),
-    primary key (tconst, genre),
-    foreign key (tconst) references title (tconst)
-);
-
-ALTER TABLE movie_data_model.title_genres OWNER TO raw1;
-
---
--- Name: movie_data_model.name; Type: TABLE; Schema: movie_data_model; Owner: postgres
---
-
-CREATE TABLE movie_data_model.name (
-    nconst character(10),
-    primaryname character varying(256),
-    birthyear character(4),
-    deathyear character(4),
-    primary key (nconst)
-);
-
-ALTER TABLE movie_data_model.name OWNER TO raw1;
-
---
--- Name: title_principals; Type: TABLE; Schema: movie_data_model; Owner: postgres
---
-
-CREATE TABLE movie_data_model.title_principals (
-    tconst character(10),
-    nconst character(10),
-    ordering integer,
-    category character varying(50),
-    job text,
-    characters text,
-    primary key (nconst, tconst, ordering),
-    foreign key (tconst) references title (tconst)
-);
-
-ALTER TABLE movie_data_model.title_principals OWNER TO raw1;
-
---
--- Name: movie_data_model.primaryprofession; Type: TABLE; Schema: movie_data_model; Owner: postgres
---
-
-CREATE TABLE movie_data_model.primaryprofession (
-    nconst character(20),
-    profession character varying(30),
-    primary key (nconst, profession),
-    foreign key (nconst) references name (nconst)
-);
-
-ALTER TABLE movie_data_model.primaryprofession OWNER TO raw1;
-
---
--- Name: movie_data_model.knownfortitles; Type: TABLE; Schema: movie_data_model; Owner: postgres
--- DEFAULT VALUE
---
-
-CREATE TABLE movie_data_model.knownfortitles (
-    nconst character(10),
-    tconst character(10),
-    primary key (nconst, tconst),
-    foreign key (nconst) references name (nconst),
-    foreign key (tconst) references title (tconst)
-);
-
-ALTER TABLE movie_data_model.knownfortitles OWNER TO raw1;
-
---
--- Name: local_title; Type: TABLE; Schema: movie_data_model; Owner: postgres
---
-
-CREATE TABLE movie_data_model.local_title (
-    titleid character(10),
-    ordering integer,
-    title text,
-    region character varying(10),
-    language character varying(10),
-    types character varying(256),
-    attributes character varying(256),
-    isoriginaltitle boolean,
-    primary key(titleid, ordering, region),
-    foreign key (titleid) references title (tconst)
-);
-
-ALTER TABLE movie_data_model.local_title OWNER TO raw1;
-
---
--- Name: title_episode; Type: TABLE; Schema: movie_data_model; Owner: postgres
---
-
-CREATE TABLE movie_data_model.title_episode (
-    tconst character(10),
-    parenttconst character(10),
-    seasonnumber integer,
-    episodenumber integer,
-    primary key(tconst, parenttconst),
-    foreign key (tconst) references title (tconst),
-    foreign key (parenttconst) references title (tconst)
-);
-
-ALTER TABLE movie_data_model.title_episode OWNER TO raw1;
-
---
--- Name: title_ratings; Type: TABLE; Schema: movie_data_model; Owner: postgres
---
-
-CREATE TABLE movie_data_model.title_ratings (
-    tconst character(10),
-    averagerating numeric(5,1),
-    numvotes integer,
-    weightedaverage numeric(5,1),
-    primary key(tconst),
-    foreign key (tconst) references title (tconst)
-);
-
-ALTER TABLE movie_data_model.title_ratings OWNER TO raw1;
-
---
--- Name: wi; Type: TABLE; Schema: movie_data_model; Owner: postgres
---
-
-CREATE TABLE movie_data_model.wi (
-    tconst character(10) NOT NULL,
-    word text NOT NULL,
-    field character(1) NOT NULL,
-    lexeme text,
-    primary key(tconst, word, field),
-    foreign key (tconst) references title (tconst)
-);
-
-ALTER TABLE movie_data_model.wi OWNER TO raw1;
-
 --
 -- fix db build issue
 --
+
 -- remove p_key violations from title_basic
 -- create temporary table for storing duplicates
 create TABLE public.tmpFix (
@@ -243,6 +80,223 @@ SELECT *
 from public.tmpFix;
 -- drop temporary table
 drop TABLE public.tmpFix;
+
+
+-- remove p_key violations from omdb_data
+-- create temporary table for storing duplicates
+create TABLE public.tmpFix (
+tconst text,
+poster text,
+awards text,
+plot text);
+-- insert duplicates into temporary table
+INSERT INTO public.tmpFix
+SELECT tconst, poster, awards, plot
+FROM public.omdb_data
+GROUP BY tconst, poster, awards, plot
+HAVING count(*) >1;
+-- delete all entries in omdb_data with duplicates
+DELETE from public.omdb_data where tconst in (SELECT tconst from public.tmpFix);
+-- re-insert rows now without duplicates from temporary table
+INSERT INTO public.omdb_data
+SELECT *
+from public.tmpFix;
+-- drop temporary table
+drop TABLE public.tmpFix;
+
+
+-- remove p_key violations from title_principals
+-- create temporary table for storing duplicates
+create TABLE public.tmpFix (
+tconst char(10),
+ordering int4,
+nconst char(10),
+category varchar(50),
+job text,
+characters text
+);
+-- insert duplicates into temporary table
+INSERT INTO public.tmpFix
+SELECT tconst, ordering, nconst, category, job, characters
+FROM public.title_principals
+GROUP BY tconst, ordering, nconst, category, job, characters
+HAVING count(*) > 1;
+-- delete all entries in title_principals with duplicates
+DELETE from public.title_principals where tconst in (SELECT tconst from public.tmpFix);
+-- re-insert rows now without duplicates from temporary table
+INSERT INTO public.title_principals
+SELECT *
+from public.tmpFix;
+-- drop temporary table
+drop TABLE public.tmpFix;
+
+
+
+
+
+DROP SCHEMA IF EXISTS movie_data_model CASCADE;
+
+CREATE SCHEMA movie_data_model;
+
+SET search_path TO movie_data_model;
+
+--
+-- Name: title; Type: TABLE; Schema: public; Owner: raw1
+--
+
+CREATE TABLE movie_data_model.title (
+    tconst character(10),
+    titletype character varying(20),
+    primarytitle text,
+    originaltitle text,
+    isadult boolean,
+    startyear character(4),
+    endyear character(4),
+    runtimeminutes integer,
+    poster character varying(256),
+    awards text,
+    plot text,
+    primary key (tconst)
+);
+
+ALTER TABLE movie_data_model.title OWNER TO raw1;
+
+--
+-- Name: title_genres; Type: TABLE; Schema: movie_data_model; Owner: raw1
+--
+
+CREATE TABLE movie_data_model.title_genres (
+    tconst character(10),
+    genre character varying(20),
+    primary key (tconst, genre),
+    foreign key (tconst) references title (tconst)
+);
+
+ALTER TABLE movie_data_model.title_genres OWNER TO raw1;
+
+--
+-- Name: movie_data_model.name; Type: TABLE; Schema: movie_data_model; Owner: raw1
+--
+
+CREATE TABLE movie_data_model.name (
+    nconst character(10),
+    primaryname character varying(256),
+    birthyear character(4),
+    deathyear character(4),
+    primary key (nconst)
+);
+
+ALTER TABLE movie_data_model.name OWNER TO raw1;
+
+--
+-- Name: title_principals; Type: TABLE; Schema: movie_data_model; Owner: raw1
+--
+
+CREATE TABLE movie_data_model.title_principals (
+    tconst character(10),
+    nconst character(10),
+    ordering integer,
+    category character varying(50),
+    job text,
+    characters text,
+    primary key (nconst, tconst, ordering),
+    foreign key (tconst) references title (tconst)
+);
+
+ALTER TABLE movie_data_model.title_principals OWNER TO raw1;
+
+--
+-- Name: movie_data_model.primaryprofession; Type: TABLE; Schema: movie_data_model; Owner: raw1
+--
+
+CREATE TABLE movie_data_model.primaryprofession (
+    nconst character(20),
+    profession character varying(30),
+    primary key (nconst, profession),
+    foreign key (nconst) references name (nconst)
+);
+
+ALTER TABLE movie_data_model.primaryprofession OWNER TO raw1;
+
+--
+-- Name: movie_data_model.knownfortitles; Type: TABLE; Schema: movie_data_model; Owner: raw1
+-- DEFAULT VALUE
+--
+
+CREATE TABLE movie_data_model.knownfortitles (
+    nconst character(10),
+    tconst character(10),
+    primary key (nconst, tconst),
+    foreign key (nconst) references name (nconst),
+    foreign key (tconst) references title (tconst)
+);
+
+ALTER TABLE movie_data_model.knownfortitles OWNER TO raw1;
+
+--
+-- Name: local_title; Type: TABLE; Schema: movie_data_model; Owner: raw1
+--
+
+CREATE TABLE movie_data_model.local_title (
+    titleid character(10),
+    ordering integer,
+    title text,
+    region character varying(10),
+    language character varying(10),
+    types character varying(256),
+    attributes character varying(256),
+    isoriginaltitle boolean,
+    primary key(titleid, ordering, region),
+    foreign key (titleid) references title (tconst)
+);
+
+ALTER TABLE movie_data_model.local_title OWNER TO raw1;
+
+--
+-- Name: title_episode; Type: TABLE; Schema: movie_data_model; Owner: raw1
+--
+
+CREATE TABLE movie_data_model.title_episode (
+    tconst character(10),
+    parenttconst character(10),
+    seasonnumber integer,
+    episodenumber integer,
+    primary key(tconst, parenttconst),
+    foreign key (tconst) references title (tconst),
+    foreign key (parenttconst) references title (tconst)
+);
+
+ALTER TABLE movie_data_model.title_episode OWNER TO raw1;
+
+--
+-- Name: title_ratings; Type: TABLE; Schema: movie_data_model; Owner: raw1
+--
+
+CREATE TABLE movie_data_model.title_ratings (
+    tconst character(10),
+    averagerating numeric(5,1),
+    numvotes integer,
+    weightedaverage numeric(5,1),
+    primary key(tconst),
+    foreign key (tconst) references title (tconst)
+);
+
+ALTER TABLE movie_data_model.title_ratings OWNER TO raw1;
+
+--
+-- Name: wi; Type: TABLE; Schema: movie_data_model; Owner: raw1
+--
+
+CREATE TABLE movie_data_model.wi (
+    tconst character(10) NOT NULL,
+    word text NOT NULL,
+    field character(1) NOT NULL,
+    lexeme text,
+    primary key(tconst, word, field),
+    foreign key (tconst) references title (tconst)
+);
+
+ALTER TABLE movie_data_model.wi OWNER TO raw1;
 
 --
 -- Distributing data
