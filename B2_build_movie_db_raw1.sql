@@ -28,7 +28,7 @@ CREATE TABLE movie_data_model.title (
     primary key (tconst)
 );
 
-ALTER TABLE movie_data_model.title OWNER TO postgres;
+ALTER TABLE movie_data_model.title OWNER TO raw1;
 
 --
 -- Name: title_genres; Type: TABLE; Schema: movie_data_model; Owner: postgres
@@ -41,7 +41,7 @@ CREATE TABLE movie_data_model.title_genres (
     foreign key (tconst) references title (tconst)
 );
 
-ALTER TABLE movie_data_model.title_genres OWNER TO postgres;
+ALTER TABLE movie_data_model.title_genres OWNER TO raw1;
 
 --
 -- Name: movie_data_model.name; Type: TABLE; Schema: movie_data_model; Owner: postgres
@@ -55,7 +55,7 @@ CREATE TABLE movie_data_model.name (
     primary key (nconst)
 );
 
-ALTER TABLE movie_data_model.name OWNER TO postgres;
+ALTER TABLE movie_data_model.name OWNER TO raw1;
 
 --
 -- Name: title_principals; Type: TABLE; Schema: movie_data_model; Owner: postgres
@@ -72,7 +72,7 @@ CREATE TABLE movie_data_model.title_principals (
     foreign key (tconst) references title (tconst)
 );
 
-ALTER TABLE movie_data_model.title_principals OWNER TO postgres;
+ALTER TABLE movie_data_model.title_principals OWNER TO raw1;
 
 --
 -- Name: movie_data_model.primaryprofession; Type: TABLE; Schema: movie_data_model; Owner: postgres
@@ -85,7 +85,7 @@ CREATE TABLE movie_data_model.primaryprofession (
     foreign key (nconst) references name (nconst)
 );
 
-ALTER TABLE movie_data_model.primaryprofession OWNER TO postgres;
+ALTER TABLE movie_data_model.primaryprofession OWNER TO raw1;
 
 --
 -- Name: movie_data_model.knownfortitles; Type: TABLE; Schema: movie_data_model; Owner: postgres
@@ -100,7 +100,7 @@ CREATE TABLE movie_data_model.knownfortitles (
     foreign key (tconst) references title (tconst)
 );
 
-ALTER TABLE movie_data_model.knownfortitles OWNER TO postgres;
+ALTER TABLE movie_data_model.knownfortitles OWNER TO raw1;
 
 --
 -- Name: local_title; Type: TABLE; Schema: movie_data_model; Owner: postgres
@@ -119,7 +119,7 @@ CREATE TABLE movie_data_model.local_title (
     foreign key (titleid) references title (tconst)
 );
 
-ALTER TABLE movie_data_model.local_title OWNER TO postgres;
+ALTER TABLE movie_data_model.local_title OWNER TO raw1;
 
 --
 -- Name: title_episode; Type: TABLE; Schema: movie_data_model; Owner: postgres
@@ -135,7 +135,7 @@ CREATE TABLE movie_data_model.title_episode (
     foreign key (parenttconst) references title (tconst)
 );
 
-ALTER TABLE movie_data_model.title_episode OWNER TO postgres;
+ALTER TABLE movie_data_model.title_episode OWNER TO raw1;
 
 --
 -- Name: title_ratings; Type: TABLE; Schema: movie_data_model; Owner: postgres
@@ -150,7 +150,7 @@ CREATE TABLE movie_data_model.title_ratings (
     foreign key (tconst) references title (tconst)
 );
 
-ALTER TABLE movie_data_model.title_ratings OWNER TO postgres;
+ALTER TABLE movie_data_model.title_ratings OWNER TO raw1;
 
 --
 -- Name: wi; Type: TABLE; Schema: movie_data_model; Owner: postgres
@@ -165,12 +165,11 @@ CREATE TABLE movie_data_model.wi (
     foreign key (tconst) references title (tconst)
 );
 
-ALTER TABLE movie_data_model.wi OWNER TO postgres;
+ALTER TABLE movie_data_model.wi OWNER TO raw1;
 
 --
 -- fix db build issue
 --
-
 -- remove p_key violations from title_basic
 -- create temporary view
 create or replace view public.tmpFix as

@@ -1,6 +1,48 @@
-Study number 69782
+D. Functionality
+
+We developed the search functionality in the database for the movie application by first developing
+the simple string_search() function D.2 to add basic search functionality when searching for a title.
+
+We decided to use postgresql table functions to get the title data by having the function return a table with tconst and primarytitle.
+
+RETURNS TABLE (
+  tconst CHARACTER(10),
+  primarytitle TEXT
+)
+
+Before returning the query the function inserts the search_string into the search_history table to log the search queries from the user, by inserting the userid uconst a timestamp to track time and the search string. We use Postgresql NOW() function to get the current time for the timestamp. 
+
+INSERT INTO search_history(uconst, tstamp, search)
+VALUES(uconst, NOW(), search_string);
+
+The last part of the function runs a RETURN query with a select statement to get the title from primarytitle or plot description by utilizing the ILIKE function to take upper and lower characters into consideration and matching the search string.
+
+RETURN query SELECT t.tconst, t.primarytitle
+FROM title t
+WHERE t.primarytitle ILIKE '%'||search_string||'%' OR t.plot ILIKE '%'||search_string||'%';
+
+D.4 function for structured string takes more input parameters to give a more precise search of title, plot, characters or primaryname of the actor. We thought that this function could be useful when users searches a more complex query when finding a title.
+
+RETURN query SELECT title.tconst, title.primarytitle
+FROM title NATURAL JOIN title_principals NATURAL JOIN name
+WHERE title.primarytitle 	       ILIKE '%'||structured_string_search.title||'%'
+AND   title.plot		       ILIKE '%'||structured_string_search.plot||'%'
+AND   title_principals.characters      ILIKE '%'||structured_string_search.characters||'%'
+AND   name.primaryname 		       ILIKE '%'||structured_string_search.name||'%';
+END
+
+It was when developing D.4 that we discovered that search strings can be empty and which both upper and lower case characters and we therefore decided to utilize the ILIKE function to solve these problems.
+
+Functions with multiple parameters hardcoded quickly become complex with many lines of codes and they takes lots of time to refactor for example if a new or different input parameters are introduced. We talked about that VARIADIC arrays as an input parameters, because
+VARIADIC arrays makes it possible for the function to accept one to more input parameters as a single array, which makes the function more extensible and flexible compared to hardcoding input parameters and using postgresql overloading feature for functions.
+
+After using the two basic search function it became obivious that these function not always help the user get the right search result, because it much different how each user search for titles and actors. For example some users write long queries to find the title while other uses short word queries with different word lexemes for example apple vs apples when searching for a title. To solve these problem we decided to use the provided inverted index wi table with lexeme and use that when developing our future functions to get more precise search results. Interved indexes maps all the keywords in the database to their respective location identifiers for more efficient processing of the search queries. 
+
+Looking back we could actually have benefited a lot by diving much deeper in the problem space of searching for movies and title to help us come up with better technical solutions in the solution space. Right now it not so obivious what functionality actually benefits the users the most and what functionality brings in most value for the shareholders. We spent a small amount of time looking at imdb's website and talked about creating simple user scenarious when searching for movies, but we didn't create these. We had some trouble from time to time when developing and in team discussion talking about what actually should be built and how to build it. We learning that talking with the product owners was time well spent and helped us get an better understanding of our problem.
 
 D.12 Best-match Querying function uses a VARIADIC array as an input parameter to make the function more flexible by allowing any number of input parameters...
 
 Dynamic query by executing a SQL expression
+
+
 
