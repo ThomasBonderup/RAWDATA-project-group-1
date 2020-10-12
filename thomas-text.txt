@@ -84,4 +84,42 @@ RETURN QUERY EXECUTE q_result;
 
 Reflection
 
-Looking back we could actually have benefited a lot by diving much deeper in the problem space of searching for movies and title to help us come up with better technical solutions in the solution space. Right now it not so obivious what functionality actually benefits the users the most and what functionality brings in most value for the shareholders. We spent a small amount of time looking at imdb's website and talked about creating simple user scenarious when searching for movies, but we didn't create these. We had some trouble from time to time when developing and in team discussion talking about what actually should be built and how to build it. We learning that talking with the product owners was time well spent and helped us get an better understanding of our problem.
+Looking back we could actually have benefited a lot by diving much deeper in the problem space of searching for movies and title to help us come up with better technical solutions in the solution space. Right now it not so obivious what functionality actually benefits the users the most and what functionality brings in most value for the shareholders. We spent a small amount of time looking at imdb's website and talked about creating simple user scenarious when searching for movies, but we didn't create these. We had some trouble from time to time when developing and in team discussion talking about what actually should be built and how to build it. We learned that talking with the product owners was time well spent and it helped us get an better understanding of our problem.
+
+E. Improving performance by indexing
+
+The database is currently indexed with primary keys on most tables using either tconst, nconst or uconst, which are used for fast retrieval in our sql queries when selecting data.
+
+We found that the the explain statement in postgresql useful to get a better understanding of the execution plan when a given statement is run on the database.
+
+Let's take the example when searching for all titles that are true on isadult.
+We used rawdata_xlarge.backup to work with a bigger dataset.
+
+explain select * from title where isadult = 't';
+
+Parallel sequential scan is the method used by the database when scanning through the title table. The database is scanning through the whole list from start to end to get all titles that are labeled t.
+
+explain select * from title where isadult = 't';
+
+Query time: 0.738 s
+Query time: 0.690 s
+
+Gather  (cost=1000.00..52512.80 rows=18967 width=329)
+  Workers Planned: 2
+  ->  Parallel Seq Scan on title  (cost=0.00..49616.10 rows=7903 width=329)
+        Filter: isadult
+
+We did a experiment by creating an index on isadult on the titles table.
+
+CREATE INDEX idx_isadult1 ON title(isadult);
+
+explain select * from title where isadult = 't';
+
+Query time: 0.564 s
+Query time: 0.593 s
+
+Index Scan using idx_isadult1 on title  (cost=0.42..5947.70 rows=18955 width=329)
+  Index Cond: (isadult = true)
+  Filter: isadult
+
+This index improved the query time by around 0.1 s. There is definity an opportunity for improvement by utilizing indexing when working with large datasets.
