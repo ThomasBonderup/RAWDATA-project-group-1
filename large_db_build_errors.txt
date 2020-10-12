@@ -1,27 +1,104 @@
------------------------- partial copy paste from terminal when building large database ----------- date 10/10/2020 -----
+Microsoft Windows [Version 10.0.19041.508]
+(c) 2020 Microsoft Corporation. All rights reserved.
 
+C:\Users\nilsm\OneDrive - Roskilde Universitet\RUC\Kandidat\1.Semester\RAWDATA\RAWDATA-project-group-1>set -euo pipefail
+Environment variable -euo pipefail not defined
+
+C:\Users\nilsm\OneDrive - Roskilde Universitet\RUC\Kandidat\1.Semester\RAWDATA\RAWDATA-project-group-1>psql -U postgres -c "drop database if exists raw1_large"
+Password for user postgres:
+DROP DATABASE
+
+C:\Users\nilsm\OneDrive - Roskilde Universitet\RUC\Kandidat\1.Semester\RAWDATA\RAWDATA-project-group-1>psql -U postgres -c "create database raw1_large"
+Password for user postgres:
+CREATE DATABASE
+
+C:\Users\nilsm\OneDrive - Roskilde Universitet\RUC\Kandidat\1.Semester\RAWDATA\RAWDATA-project-group-1>psql -U postgres -d raw1_large -f rawdata_large.backup
+Password for user postgres:
+SET
+SET
+SET
+SET
+SET
+ set_config
+------------
+
+(1 row)
+
+
+SET
+SET
+SET
+SET
+SET
+SET
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+COPY 625085
+COPY 1001170
+COPY 782803
+COPY 216109
+COPY 216109
+COPY 82181
+COPY 1854207
+COPY 216109
+COPY 9605720
+ALTER TABLE
+
+C:\Users\nilsm\OneDrive - Roskilde Universitet\RUC\Kandidat\1.Semester\RAWDATA\RAWDATA-project-group-1>psql -U postgres -d raw1_large -f B2_build_movie_db.sql
+Password for user postgres:
+psql:B2_build_movie_db.sql:6: NOTICE:  schema "movie_data_model" does not exist, skipping
+DROP SCHEMA
+CREATE SCHEMA
+SET
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
 INSERT 0 625085
-psql:B2_build_movie_db.sql:178: ERROR:  duplicate key value violates unique constraint "title_pkey"
+psql:B2_build_movie_db.sql:179: ERROR:  duplicate key value violates unique constraint "title_pkey"
 DETAIL:  Key (tconst)=(tt9737852 ) already exists.
-psql:B2_build_movie_db.sql:182: ERROR:  duplicate key value violates unique constraint "title_genres_pkey"
+psql:B2_build_movie_db.sql:183: ERROR:  duplicate key value violates unique constraint "title_genres_pkey"
 DETAIL:  Key (tconst, genre)=(tt9760504 , Action) already exists.
-psql:B2_build_movie_db.sql:186: ERROR:  duplicate key value violates unique constraint "title_episode_pkey"
+psql:B2_build_movie_db.sql:187: ERROR:  duplicate key value violates unique constraint "title_episode_pkey"
 DETAIL:  Key (tconst, parenttconst)=(tt9754680 , tt5834204 ) already exists.
-psql:B2_build_movie_db.sql:190: ERROR:  duplicate key value violates unique constraint "title_ratings_pkey"
+psql:B2_build_movie_db.sql:191: ERROR:  duplicate key value violates unique constraint "title_ratings_pkey"
 DETAIL:  Key (tconst)=(tt9737852 ) already exists.
-psql:B2_build_movie_db.sql:194: ERROR:  insert or update on table "wi" violates foreign key constraint "wi_tconst_fkey"
+UPDATE 0
+psql:B2_build_movie_db.sql:198: ERROR:  insert or update on table "wi" violates foreign key constraint "wi_tconst_fkey"
 DETAIL:  Key (tconst)=(tt0001475 ) is not present in table "title".
-psql:B2_build_movie_db.sql:198: ERROR:  insert or update on table "local_title" violates foreign key constraint "local_title_titleid_
-fkey"
+psql:B2_build_movie_db.sql:202: ERROR:  insert or update on table "local_title" violates foreign key constraint "local_title_titleid_fkey"
 DETAIL:  Key (titleid)=(tt0001475 ) is not present in table "title".
-psql:B2_build_movie_db.sql:202: ERROR:  duplicate key value violates unique constraint "title_principals_pkey"
+psql:B2_build_movie_db.sql:206: ERROR:  duplicate key value violates unique constraint "title_principals_pkey"
 DETAIL:  Key (nconst, tconst, ordering)=(nm2893431 , tt9748010 , 9) already exists.
 INSERT 0 1182911
 CREATE TABLE
 INSERT 0 1935184
 INSERT 0 0
 DROP TABLE
-psql:B2_build_movie_db.sql:224: NOTICE:  drop cascades to 9 other objects
+psql:B2_build_movie_db.sql:228: NOTICE:  drop cascades to 9 other objects
 DETAIL:  drop cascades to table public.name_basics
 drop cascades to table public.omdb_data
 drop cascades to table public.title_akas
@@ -32,3 +109,90 @@ drop cascades to table public.title_principals
 drop cascades to table public.title_ratings
 drop cascades to table public.wi
 DROP SCHEMA
+
+C:\Users\nilsm\OneDrive - Roskilde Universitet\RUC\Kandidat\1.Semester\RAWDATA\RAWDATA-project-group-1>psql -U postgres -d raw1_large -f C2_build_framework_db.sql
+Password for user postgres:
+SET
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+INSERT 0 625085
+
+C:\Users\nilsm\OneDrive - Roskilde Universitet\RUC\Kandidat\1.Semester\RAWDATA\RAWDATA-project-group-1>psql -U postgres -d raw1_large -f dummyData.sql
+Password for user postgres:
+INSERT 0 6
+INSERT 0 17
+INSERT 0 18
+psql:dummyData.sql:70: ERROR:  insert or update on table "rating" violates foreign key constraint "rating_tconst_fkey"
+DETAIL:  Key (tconst)=(tt0312284 ) is not present in table "title".
+psql:dummyData.sql:95: ERROR:  insert or update on table "rating_history" violates foreign key constraint "rating_history_uconst_tconst_fkey"
+DETAIL:  Key (uconst, tconst)=(ui000001  , tt0312284 ) is not present in table "rating".
+INSERT 0 17
+psql:dummyData.sql:139: ERROR:  insert or update on table "title_notes" violates foreign key constraint "title_notes_tconst_fkey"
+DETAIL:  Key (tconst)=(tt0348596 ) is not present in table "title".
+psql:dummyData.sql:165: ERROR:  insert or update on table "title_bookmark" violates foreign key constraint "title_bookmark_tconst_fkey"
+DETAIL:  Key (tconst)=(tt7896606 ) is not present in table "title".
+
+C:\Users\nilsm\OneDrive - Roskilde Universitet\RUC\Kandidat\1.Semester\RAWDATA\RAWDATA-project-group-1>psql -U postgres -d raw1 -f code_script.sql
+Password for user postgres:
+SET
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE TRIGGER
+CREATE FUNCTION
+CREATE TRIGGER
+CREATE FUNCTION
+CREATE TRIGGER
+DROP FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+psql:code_script.sql:534: ERROR:  trigger "upd_name_rating_trigger" for relation "rating" already exists
+psql:code_script.sql:544: NOTICE:  function exact_match_search(pg_catalog.bpchar,pg_catalog.bpchar,pg_catalog.bpchar) does not exist, skipping
+DROP FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+
+C:\Users\nilsm\OneDrive - Roskilde Universitet\RUC\Kandidat\1.Semester\RAWDATA\RAWDATA-project-group-1>

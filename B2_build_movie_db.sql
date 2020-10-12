@@ -168,6 +168,55 @@ CREATE TABLE movie_data_model.wi (
 ALTER TABLE movie_data_model.wi OWNER TO postgres;
 
 --
+-- fix db build issue
+--
+
+-- remove p_key violations from title_basic
+-- create temporary view
+create or replace view public.tmpFix as
+SELECT tconst, titletype, primarytitle, originaltitle, isadult, startyear, endyear, runtimeminutes, genres FROM public.title_basics
+GROUP BY tconst, titletype, primarytitle, originaltitle, isadult, startyear, endyear, runtimeminutes, genres
+HAVING count(*) > 1;
+-- delete all entries with duplicate values
+DELETE from public.title_basics where tconst in (SELECT tconst from public.tmpFix);
+-- re-insert all duplicate entries from temporary view
+INSERT INTO public.title_basics
+SELECT *
+from public.tmpFix;
+-- drop temporary view
+drop view public.tmpFix;
+
+-- remove p_key violations title_episode
+-- create temporary view
+create or replace view public.tmpFix as
+SELECT tconst, parenttconst, seasonnumber, episodenumber FROM public.title_episode
+GROUP BY tconst, parenttconst, seasonnumber, episodenumber
+HAVING count(*) > 1;
+-- delete all entries with duplicate values
+DELETE from public.title_episode where tconst in (SELECT tconst from public.tmpFix);
+-- re-insert all duplicate entries from temporary view
+INSERT INTO public.title_episode
+SELECT *
+from public.tmpFix;
+-- drop temporary view
+drop view public.tmpFix;
+
+-- remove p_key violations title_ratings
+-- create temporary view
+create or replace view public.tmpFix as
+SELECT  tconst, averagerating, numvotes FROM public.title_ratings
+GROUP BY  tconst, averagerating, numvotes
+HAVING count(*) > 1;
+-- delete all entries with duplicate values
+DELETE from public.title_ratings where tconst in (SELECT tconst from public.tmpFix);
+-- re-insert all duplicate entries from temporary view
+INSERT INTO public.title_ratings
+SELECT *
+from public.tmpFix;
+-- drop temporary view
+drop view public.tmpFix;
+
+--
 -- Distributing data
 --
 
