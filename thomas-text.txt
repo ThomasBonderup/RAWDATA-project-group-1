@@ -17,7 +17,7 @@ VALUES(uconst, NOW(), search_string);
 
 We talked about using trigger functions, but the search queries are not inserted into a search table to create the trigger onto. An insert is suffient enough in our case with the search_history table only. The functionality with inserting ratings into the rating_history table should take advantage of trigger functions after in insert.
 
-The last part of the string_search function runs a RETURN query with a select statement to get the title from primarytitle or plot description by utilizing the ILIKE function to take upper and lower characters into consideration and matching the search string. Another way to solve this problem could be by using a standard LIKE function combined with a lower() to transform the characters into lower case.
+The last part of the string_search function runs a RETURN query with a select statement to get the title from primarytitle or plot description by utilizing the ILIKE operator to take upper and lower characters into consideration and matching the search string.
 
 RETURN query SELECT t.tconst, t.primarytitle
 FROM title t
@@ -33,16 +33,16 @@ AND   title_principals.characters      ILIKE '%'||structured_string_search.chara
 AND   name.primaryname 		       ILIKE '%'||structured_string_search.name||'%';
 END
 
-It was when developing D.4 that we discovered that search strings can be empty and which both upper and lower case characters and we therefore decided to utilize the ILIKE function to solve these problems.
+It was when developing D.4 that we discovered that search strings can be empty and which both upper and lower case characters and we therefore decided to utilize the ILIKE operator to solve these problems.
 
-Functions with multiple parameters hardcoded can quickly become complex with many lines of codes and they takes lots of time to refactor for example if a new or different input parameters are introduced. We talked about using VARIADIC arrays as an input parameters, because
+Functions hardcoded with multiple input parameters can quickly become complex with many lines of codes and they takes lots of time to refactor and debug for example if a new or different input parameters are introduced. We talked about using VARIADIC arrays as an input parameters, because
 VARIADIC arrays makes it possible for the function to accept one to more input parameters as a single array, which makes the function more extensible and flexible compared to hardcoding input parameters and using postgresql overloading feature for functions. We have an example of a function with VARIADIC arrays in D.12.
 
-After using the two basic search function it became obivious that these function not always help the user get the right search result, because it much different how each user search for titles and actors. For example some users write long queries to find the title while other uses short word queries with different word endings for example apple vs apples when searching for a title. To solve these problem we decided to use the provided inverted index wi table with lexemes (different word endings) and use that when developing our future functions to get more precise search results. Interved indexes maps all the keywords in the database to their respective location identifiers for more efficient processing of the search queries.
+After using the two basic search function it became obivious that these function not always help the user get the right search result, because it much different how each user search for titles and actors. For example some users write long queries to find the title while other uses short word queries with different word endings for example apple vs apples when searching for a title. To solve these problem we decided to use the provided inverted index wi table with lexemes (different word endings) and use that when developing our future functions to get more precise search results. Interved indexes[chapter 31 p.13] works by mapping all the keywords in the database to their respective location identifiers in a inverted indexes table for more efficient processing of the search queries.
 
 Function D.11 with exact-match querying uses the inverted index wi when matching intersecting keywords
 
-RETURN query SELECT t.tconst, t.primarytitle
+RETURN QUERY SELECT T.TCONST, T.PRIMARYTITLE
 FROM title t,
 (SELECT wi.tconst FROM wi WHERE word = w1
 INTERSECT
@@ -82,15 +82,6 @@ Finally the QUERY is executed the return the result for the function.
 q_result := q_start || q_end;
 RETURN QUERY EXECUTE q_result;
 
-
-
-
-
 Reflection
 
 Looking back we could actually have benefited a lot by diving much deeper in the problem space of searching for movies and title to help us come up with better technical solutions in the solution space. Right now it not so obivious what functionality actually benefits the users the most and what functionality brings in most value for the shareholders. We spent a small amount of time looking at imdb's website and talked about creating simple user scenarious when searching for movies, but we didn't create these. We had some trouble from time to time when developing and in team discussion talking about what actually should be built and how to build it. We learning that talking with the product owners was time well spent and helped us get an better understanding of our problem.
-
-
-
-
-
