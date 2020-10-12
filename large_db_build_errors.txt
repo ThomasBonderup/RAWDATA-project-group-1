@@ -1,18 +1,10 @@
-psql:B2_build_movie_db.sql:257: ERROR:  duplicate key value violates unique constraint "title_pkey"
-DETAIL:  Key (tconst)=(tt9737852 ) already exists.
+psql:dummyData.sql:70: ERROR:  insert or update on table "rating" violates foreign key constraint "rating_tconst_fkey"
+DETAIL:  Key (tconst)=(tt0312284 ) is not present in table "title".
 
 
+psql:dummyData.sql:95: ERROR:  insert or update on table "rating_history" violates foreign key constraint "rating_history_uconst_tconst_fkey"
+DETAIL:  Key (uconst, tconst)=(ui000001  , tt0312284 ) is not present in table "rating".
 
 
-psql:B2_build_movie_db.sql:261: ERROR:  insert or update on table "title_genres" violates foreign key constraint "title_genres_tconst_fkey"
-DETAIL:  Key (tconst)=(tt0004907 ) is not present in table "title".
-psql:B2_build_movie_db.sql:265: ERROR:  insert or update on table "title_episode" violates foreign key constraint "title_episode_tconst_fkey"
-DETAIL:  Key (tconst)=(tt3122096 ) is not present in table "title".
-psql:B2_build_movie_db.sql:269: ERROR:  insert or update on table "title_ratings" violates foreign key constraint "title_ratings_tconst_fkey"
-DETAIL:  Key (tconst)=(tt0003386 ) is not present in table "title".
-psql:B2_build_movie_db.sql:276: ERROR:  insert or update on table "wi" violates foreign key constraint "wi_tconst_fkey"
-DETAIL:  Key (tconst)=(tt0001475 ) is not present in table "title".
-psql:B2_build_movie_db.sql:280: ERROR:  insert or update on table "local_title" violates foreign key constraint "local_title_titleid_fkey"
-DETAIL:  Key (titleid)=(tt0001475 ) is not present in table "title".
-psql:B2_build_movie_db.sql:284: ERROR:  duplicate key value violates unique constraint "title_principals_pkey"
-DETAIL:  Key (nconst, tconst, ordering)=(nm2893431 , tt9748010 , 9) already exists.
+psql:dummyData.sql:165: ERROR:  insert or update on table "title_bookmark" violates foreign key constraint "title_bookmark_tconst_fkey"
+DETAIL:  Key (tconst)=(tt7896606 ) is not present in table "title".

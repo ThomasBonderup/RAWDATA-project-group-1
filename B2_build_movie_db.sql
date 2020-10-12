@@ -105,6 +105,33 @@ from public.tmpFix;
 drop TABLE public.tmpFix;
 
 
+-- remove p_key violations from title_principals
+-- create temporary table for storing duplicates
+create TABLE public.tmpFix (
+tconst char(10),
+ordering int4,
+nconst char(10),
+category varchar(50),
+job text,
+characters text
+);
+-- insert duplicates into temporary table
+INSERT INTO public.tmpFix
+SELECT tconst, ordering, nconst, category, job, characters
+FROM public.title_principals
+GROUP BY tconst, ordering, nconst, category, job, characters
+HAVING count(*) > 1;
+-- delete all entries in title_principals with duplicates
+DELETE from public.title_principals where tconst in (SELECT tconst from public.tmpFix);
+-- re-insert rows now without duplicates from temporary table
+INSERT INTO public.title_principals
+SELECT *
+from public.tmpFix;
+-- drop temporary table
+drop TABLE public.tmpFix;
+
+
+
 
 
 DROP SCHEMA IF EXISTS movie_data_model CASCADE;
