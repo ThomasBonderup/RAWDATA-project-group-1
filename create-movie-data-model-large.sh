@@ -14,3 +14,5 @@ psql -U postgres -d raw1_large -f C2_build_framework_db.sql
 psql -U postgres -d raw1_large -f dummyData.sql
 
 psql -U postgres -d raw1_large -f code_script.sql
+
+psql -U postgres -d raw1_large -a -f test_script.sql > test_output_large.txt
