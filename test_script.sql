@@ -70,6 +70,11 @@ SELECT *
 FROM rating
 WHERE tconst = 'tt11097072'  AND uconst = 'ui000001';
 
+-- Test case: Showing that the rating history is updated with inserts
+SELECT *
+FROM rating_history 
+WHERE uconst = 'ui000001';
+
 -- Test case: Testing update on user ratings with review
 SELECT upd_user_rating('ui000001', 'tt11097072', 4, 'I watched it again and changed my mind');
 
@@ -78,6 +83,10 @@ SELECT *
 FROM rating
 WHERE tconst = 'tt11097072'  AND uconst = 'ui000001';
 
+-- Test case: Showing that the rating history is updated with updates on title ratings
+SELECT *
+FROM rating_history 
+WHERE uconst = 'ui000001';
 
 
 
