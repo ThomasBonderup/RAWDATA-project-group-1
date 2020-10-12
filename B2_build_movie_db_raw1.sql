@@ -171,49 +171,78 @@ ALTER TABLE movie_data_model.wi OWNER TO raw1;
 -- fix db build issue
 --
 -- remove p_key violations from title_basic
--- create temporary view
-create or replace view public.tmpFix as
-SELECT tconst, titletype, primarytitle, originaltitle, isadult, startyear, endyear, runtimeminutes, genres FROM public.title_basics
+-- create temporary table for storing duplicates
+create TABLE public.tmpFix (
+tconst char(10),
+titletype varchar(20),
+primarytitle text,
+originaltitle text,
+isadult bool,
+startyear char(4),
+endyear char(4),
+runtimeminutes int4,
+genres varchar(256));
+-- insert duplicates into temporary table
+INSERT INTO public.tmpFix
+SELECT tconst, titletype, primarytitle, originaltitle, isadult, startyear, endyear, runtimeminutes, genres
+FROM public.title_basics
 GROUP BY tconst, titletype, primarytitle, originaltitle, isadult, startyear, endyear, runtimeminutes, genres
 HAVING count(*) > 1;
--- delete all entries with duplicate values
+-- delete all entries in title_basics with duplicates
 DELETE from public.title_basics where tconst in (SELECT tconst from public.tmpFix);
--- re-insert all duplicate entries from temporary view
+-- re-insert rows now without duplicates from temporary table
 INSERT INTO public.title_basics
 SELECT *
 from public.tmpFix;
--- drop temporary view
-drop view public.tmpFix;
+-- drop temporary table
+drop TABLE public.tmpFix;
 
--- remove p_key violations title_episode
--- create temporary view
-create or replace view public.tmpFix as
-SELECT tconst, parenttconst, seasonnumber, episodenumber FROM public.title_episode
+
+
+-- remove p_key violations from title_episode
+-- create temporary table for storing duplicates
+create TABLE public.tmpFix (
+tconst char(10),
+parenttconst char(10),
+seasonnumber int4,
+episodenumber int4);
+-- insert duplicates into temporary table
+INSERT INTO public.tmpFix
+SELECT tconst, parenttconst, seasonnumber, episodenumber
+FROM public.title_episode
 GROUP BY tconst, parenttconst, seasonnumber, episodenumber
 HAVING count(*) > 1;
--- delete all entries with duplicate values
+-- delete all entries in title_episode with duplicates
 DELETE from public.title_episode where tconst in (SELECT tconst from public.tmpFix);
--- re-insert all duplicate entries from temporary view
+-- re-insert rows now without duplicates from temporary table
 INSERT INTO public.title_episode
 SELECT *
 from public.tmpFix;
--- drop temporary view
-drop view public.tmpFix;
+-- drop temporary table
+drop TABLE public.tmpFix;
 
--- remove p_key violations title_ratings
--- create temporary view
-create or replace view public.tmpFix as
-SELECT  tconst, averagerating, numvotes FROM public.title_ratings
+
+
+-- remove p_key violations from title_ratings
+-- create temporary table for storing duplicates
+create TABLE public.tmpFix (
+tconst char(10),
+averagerating numeric(5,1),
+numvotes int4);
+-- insert duplicates into temporary table
+INSERT INTO public.tmpFix
+SELECT  tconst, averagerating, numvotes
+FROM public.title_ratings
 GROUP BY  tconst, averagerating, numvotes
 HAVING count(*) > 1;
--- delete all entries with duplicate values
+-- delete all entries in title_ratings with duplicates
 DELETE from public.title_ratings where tconst in (SELECT tconst from public.tmpFix);
--- re-insert all duplicate entries from temporary view
+-- re-insert rows now without duplicates from temporary table
 INSERT INTO public.title_ratings
 SELECT *
 from public.tmpFix;
--- drop temporary view
-drop view public.tmpFix;
+-- drop temporary table
+drop TABLE public.tmpFix;
 
 --
 -- Distributing data
