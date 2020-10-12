@@ -10,12 +10,14 @@ RETURNS TABLE (
   primarytitle TEXT
 )
 
-Before returning the query the function inserts the search_string into the search_history table to log the search queries from the user, by inserting the userid uconst a timestamp to track time and the search string. We use Postgresql NOW() function to get the current time for the timestamp. 
+Before returning the query the function inserts the search_string into the search_history table to log the search queries from the user, by inserting the userid uconst a timestamp to track time and the search string with a sql insert statement. We use Postgresql NOW() function to get the current time for the timestamp. 
 
 INSERT INTO search_history(uconst, tstamp, search)
 VALUES(uconst, NOW(), search_string);
 
-The last part of the function runs a RETURN query with a select statement to get the title from primarytitle or plot description by utilizing the ILIKE function to take upper and lower characters into consideration and matching the search string.
+We talked about using trigger functions, but the search queries are not inserted into a search table to create the trigger onto. An insert is suffient enough in our case with the search_history table only. The functionality with inserting ratings into the rating_history table should take advantage of trigger functions after in insert.
+
+The last part of the string_search function runs a RETURN query with a select statement to get the title from primarytitle or plot description by utilizing the ILIKE operator to take upper and lower characters into consideration and matching the search string.
 
 RETURN query SELECT t.tconst, t.primarytitle
 FROM title t
@@ -31,18 +33,55 @@ AND   title_principals.characters      ILIKE '%'||structured_string_search.chara
 AND   name.primaryname 		       ILIKE '%'||structured_string_search.name||'%';
 END
 
-It was when developing D.4 that we discovered that search strings can be empty and which both upper and lower case characters and we therefore decided to utilize the ILIKE function to solve these problems.
+It was when developing D.4 that we discovered that search strings can be empty and which both upper and lower case characters and we therefore decided to utilize the ILIKE operator to solve these problems.
 
-Functions with multiple parameters hardcoded quickly become complex with many lines of codes and they takes lots of time to refactor for example if a new or different input parameters are introduced. We talked about that VARIADIC arrays as an input parameters, because
-VARIADIC arrays makes it possible for the function to accept one to more input parameters as a single array, which makes the function more extensible and flexible compared to hardcoding input parameters and using postgresql overloading feature for functions.
+Functions hardcoded with multiple input parameters can quickly become complex with many lines of codes and they takes lots of time to refactor and debug for example if a new or different input parameters are introduced. We talked about using VARIADIC arrays as an input parameters, because
+VARIADIC arrays makes it possible for the function to accept one to more input parameters as a single array, which makes the function more extensible and flexible compared to hardcoding input parameters and using postgresql overloading feature for functions. We have an example of a function with VARIADIC arrays in D.12.
 
-After using the two basic search function it became obivious that these function not always help the user get the right search result, because it much different how each user search for titles and actors. For example some users write long queries to find the title while other uses short word queries with different word lexemes for example apple vs apples when searching for a title. To solve these problem we decided to use the provided inverted index wi table with lexeme and use that when developing our future functions to get more precise search results. Interved indexes maps all the keywords in the database to their respective location identifiers for more efficient processing of the search queries. 
+After using the two basic search function it became obivious that these function not always help the user get the right search result, because it much different how each user search for titles and actors. For example some users write long queries to find the title while other uses short word queries with different word endings for example apple vs apples when searching for a title. To solve these problem we decided to use the provided inverted index wi table with lexemes (different word endings) and use that when developing our future functions to get more precise search results. Interved indexes[chapter 31 p.13] works by mapping all the keywords in the database to their respective location identifiers in a inverted indexes table for more efficient processing of the search queries.
+
+Function D.11 with exact-match querying uses the inverted index wi when matching intersecting keywords
+
+RETURN QUERY SELECT T.TCONST, T.PRIMARYTITLE
+FROM title t,
+(SELECT wi.tconst FROM wi WHERE word = w1
+INTERSECT
+SELECT wi.tconst FROM wi WHERE word = w2
+INTERSECT
+SELECT wi.tconst FROM wi WHERE word = w3
+) w
+WHERE t.tconst = w.tconst;
+
+Function D.12 Best-match querying function uses a VARIADIC array as an input parameter to make the function more flexible by allowing any number of input parameters.
+
+CREATE OR REPLACE FUNCTION dynamic_bestmatch(VARIADIC w text[])
+
+SELECT * FROM dynamic_bestmatch('apple');
+SELECT * FROM dynamic_bestmatch('apple', 'mads', 'mikkelsen');
+
+Function D.12 also uses ranking and a dynamic query by executing a SQL expression being built with a foreach loop looping throught the VARIADIC array to build a query string with all the input parameters. Our solution took advantage of lots of string concatenation to build out an advanced query string to be executed.
+
+DECLARE
+  w_elem TEXT;
+  q_start TEXT := 'SELECT t.tconst, SUM(relevance) RANK, primarytitle FROM title t, ( ';
+  q_end TEXT := ') w WHERE t.tconst = w.tconst GROUP BY t.tconst, primarytitle ORDER BY RANK DESC';
+  q_result TEXT;
+BEGIN
+
+FOREACH w_elem IN ARRAY w
+LOOP
+q_start := q_start || 'SELECT distinct wi.tconst, 1 relevance FROM wi WHERE word = '''|| w_elem ||''' UNION ALL ';
+END LOOP;
+
+We ran into a problem with an extra UNION ALL in the query string right after the loop finished building the query string. Using some substring magic by truncating the string with -10 characters was our solution to remove the last UNION ALL from the query string.
+
+q_start := SUBSTRING(q_start, 1, LENGTH(q_start)-10);
+
+Finally the QUERY is executed the return the result for the function.
+
+q_result := q_start || q_end;
+RETURN QUERY EXECUTE q_result;
+
+Reflection
 
 Looking back we could actually have benefited a lot by diving much deeper in the problem space of searching for movies and title to help us come up with better technical solutions in the solution space. Right now it not so obivious what functionality actually benefits the users the most and what functionality brings in most value for the shareholders. We spent a small amount of time looking at imdb's website and talked about creating simple user scenarious when searching for movies, but we didn't create these. We had some trouble from time to time when developing and in team discussion talking about what actually should be built and how to build it. We learning that talking with the product owners was time well spent and helped us get an better understanding of our problem.
-
-D.12 Best-match Querying function uses a VARIADIC array as an input parameter to make the function more flexible by allowing any number of input parameters...
-
-Dynamic query by executing a SQL expression
-
-
-
