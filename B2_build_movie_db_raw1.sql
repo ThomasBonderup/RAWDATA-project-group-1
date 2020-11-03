@@ -104,7 +104,13 @@ from public.tmpFix;
 -- drop temporary table
 drop TABLE public.tmpFix;
 
-
+-- remove f_key violations from title_basic
+Delete from public.title_principals tp
+where not exists (
+  select null
+  from public.name_basics nb
+  where tp.nconst = nb.nconst
+);
 -- remove p_key violations from title_principals
 -- create temporary table for storing duplicates
 create TABLE public.tmpFix (
@@ -200,7 +206,8 @@ CREATE TABLE movie_data_model.title_principals (
     job text,
     characters text,
     primary key (nconst, tconst, ordering),
-    foreign key (tconst) references title (tconst)
+    foreign key (tconst) references title (tconst),
+    foreign key (nconst) references name (nconst)
 );
 
 ALTER TABLE movie_data_model.title_principals OWNER TO raw1;
