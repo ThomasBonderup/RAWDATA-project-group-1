@@ -1,7 +1,7 @@
 ------------- Dummy data for testing
 -- user (uconst CHARACTER(10), firstName text, lastName text, email VARCHAR(50), password VARCHAR(16), username VARCHAR(15))
-insert into movie_data_model.user
-values ('ui000001', 'Alex', 'Tao', 'alta@dummy.data', 'alta01pw', 'alta01'),
+insert into movie_data_model.user (uconst, firstName, lastName, email, password, username) values
+('ui000001', 'Alex', 'Tao', 'alta@dummy.data', 'alta01pw', 'alta01'),
 ('ui000002', 'Nils', 'Müllenborn', 'nimu@dummy.data', 'nimu01pw', 'nimu01'),
 ('ui000003', 'Thomas', 'Winther', 'thwi@dummy.data', 'thwi01pw', 'thwi01'),
 ('ui000004', 'Emilie', 'Unna', 'emun@dummy.data', 'emun01pw', 'emun01'),
@@ -9,8 +9,8 @@ values ('ui000001', 'Alex', 'Tao', 'alta@dummy.data', 'alta01pw', 'alta01'),
 ('ui000006', 'Henrik', 'Bulskov', 'hebu@dummy.data', 'hebu01pw', 'hebu01');
 
 -- name_bookmark (uconst CHARACTER(10), nconst CHARACTER(10), timestamp TIMESTAMP)
-insert into movie_data_model.name_bookmark
-values ('ui000001', 'nm0000048', '2020-10-08 15:49:51.634682'),
+insert into movie_data_model.name_bookmark (uconst, nconst, tstamp) values
+('ui000001', 'nm0000048', '2020-10-08 15:49:51.634682'),
 ('ui000001', 'nm0000076', '2020-09-03 14:29:00.904682'),
 ('ui000001', 'nm0000072', '2020-10-08 17:49:51.634682'),
 ('ui000002', 'nm0000096', '2020-03-07 10:47:00.904682'),
@@ -29,8 +29,8 @@ values ('ui000001', 'nm0000048', '2020-10-08 15:49:51.634682'),
 ('ui000006', 'nm0000124', '2020-10-08 17:49:11.634682');
 
 -- name_notes (uconst CHARACTER(10), nconst CHARACTER(10), notes text)
-insert into movie_data_model.name_notes
-values ('ui000001', 'nm0000071', 'dummy n note abc1xyz'),
+insert into movie_data_model.name_notes (uconst, nconst, notes) values
+('ui000001', 'nm0000071', 'dummy n note abc1xyz'),
 ('ui000001', 'nm0000226', 'dummy n note abc2qwe'),
 ('ui000001', 'nm0000178', 'dummy n note abc3xyz'),
 ('ui000002', 'nm0000226', 'dummy n note abc4qwe'),
@@ -50,8 +50,8 @@ values ('ui000001', 'nm0000071', 'dummy n note abc1xyz'),
 ('ui000006', 'nm0000380', 'dummy n note abc9qwe');
 
 -- titles_for testing (tconst, titletype, primarytitle, originaltitle, isadult, startyear,	endyear, runtimeminutes, poster, awards, plot)
-INSERT INTO movie_data_model.title
-values ('tt9999999', 'movie', 'Test primarytitle', 'Test primarytitle', 'f', '2020',	'2020', '60', 'N/A', 'N/A', 'test plot'),
+INSERT INTO movie_data_model.title (tconst, titletype, primarytitle, originaltitle, isadult, startyear,	endyear, runtimeminutes, poster, awards, plot) values
+('tt9999999', 'movie', 'Test primarytitle', 'Test primarytitle', 'f', '2020',	'2020', '60', 'N/A', 'N/A', 'test plot'),
 ('tt9999998', 'movie', 'Test 1 primarytitle', 'Test a primarytitle', 'f', '2020',	'2020', '60', 'N/A', 'N/A', 'test plot'),
 ('tt9999997', 'tvSeries', 'Test 2 primarytitle', 'Test primarytitle', 'f', '2020',	'2020', '60', 'N/A', 'N/A', 'test plot'),
 ('tt9999996', 'movie', 'Test 3 primarytitle', 'Test a primarytitle', 'f', '2020',	'2020', '60', 'N/A', 'N/A', 'test plot'),
@@ -61,15 +61,15 @@ values ('tt9999999', 'movie', 'Test primarytitle', 'Test primarytitle', 'f', '20
 ('tt9999992', 'movie', 'Test 7 primarytitle', 'Test d primarytitle', 'f', '2020',	'2020', '60', 'N/A', 'N/A', 'test plot'),
 ('tt9999991', 'movie', 'Test 8 primarytitle', 'Test d primarytitle', 'f', '2020',	'2020', '60', 'N/A', 'N/A', 'test plot');
 
-insert INTO movie_data_model.name
-values ('nm99999999', 'Test name', '1996', '2020');
+insert INTO movie_data_model.name (nconst, primaryname, birthyear, deathyear) values
+('nm99999999', 'Test name', '1996', '2020');
 
-insert INTO movie_data_model.title_principals
-  values ('tt9999999', 'nm99999999', '1', 'actor', '', '');
+insert INTO movie_data_model.title_principals (tconst, nconst, ordering, category, job, characters) values
+  ('tt9999999', 'nm99999999', '1', 'actor', '', '');
 
 -- rating (uconst CHARACTER(10), tconst CHARACTER(10), rating integer, review text)
-insert into movie_data_model.rating
-values ('ui000001', 'tt9999999', '7', 'Awesome! best ever :)'),
+insert into movie_data_model.rating (uconst, tconst, rating, review) values
+('ui000001', 'tt9999999', '7', 'Awesome! best ever :)'),
 ('ui000001', 'tt9999998', '3', 'Interesting, invigorating but funny 3/10'),
 ('ui000001', 'tt9999997', '7', 'scary stuff, but still good'),
 ('ui000002', 'tt9999996', '8', 'this is a dummy review'),
@@ -88,8 +88,8 @@ values ('ui000001', 'tt9999999', '7', 'Awesome! best ever :)'),
 ('ui000006', 'tt9999994', '7', 'i watch this 3 times a year');
 
 --rating_history (uconst CHARACTER(10), tconst CHARACTER(10), timestamp TIMESTAMP, rating integer, review text)
-insert into movie_data_model.rating_history
-values ('ui000001', 'tt9999999', '2020-09-09 16:29:11.904682', '7', 'Awesome! best ever :)'),
+insert into movie_data_model.rating_history (uconst, tconst, tstamp, rating, review) values
+('ui000001', 'tt9999999', '2020-09-09 16:29:11.904682', '7', 'Awesome! best ever :)'),
 ('ui000001', 'tt9999998', '2020-03-05 14:37:11.904682', '3', 'Interesting, invigorating but funny 3/10'),
 ('ui000001', 'tt9999997', '2020-09-06 16:29:11.904682', '7', 'scary stuff, but still good'),
 ('ui000001', 'tt9999997', '2020-07-09 16:39:11.904682', '8', 'scary stuff, alright i guess'),
@@ -113,8 +113,8 @@ values ('ui000001', 'tt9999999', '2020-09-09 16:29:11.904682', '7', 'Awesome! be
 ('ui000006', 'tt9999994', '2020-02-09 11:29:11.904682', '7', 'i watch this 3 times a year');
 
 -- search_history (uconst CHARACTER(10), timestamp TIMESTAMP, search text)
-insert into movie_data_model.search_history
-values ('ui000001', '2020-10-08 14:23:51.904682', 'harry potter'),
+insert into movie_data_model.search_history (uconst, tstamp, search) values
+('ui000001', '2020-10-08 14:23:51.904682', 'harry potter'),
 ('ui000001', '2020-09-09 16:29:11.904682', 'Dicaprio'),
 ('ui000002', '2020-02-11 19:41:31.904682', 'apples'),
 ('ui000002', '2020-01-02 15:19:41.904682', '2008'),
@@ -133,8 +133,8 @@ values ('ui000001', '2020-10-08 14:23:51.904682', 'harry potter'),
 ('ui000006', '2020-09-02 11:44:51.904682', 'the simpsons');
 
 -- title_notes (uconst CHARACTER(10), tconst CHARACTER(10), notes text)
-insert into movie_data_model.title_notes
-values ('ui000001', 'tt9999993', 'dummy t note abcabc1xyz'),
+insert into movie_data_model.title_notes (uconst, tconst, notes) values
+('ui000001', 'tt9999993', 'dummy t note abcabc1xyz'),
 ('ui000001', 'tt9999992', 'dummy t note abc1abc1xyz'),
 ('ui000001', 'tt9999994', 'dummy t note abc1xyzabc2'),
 ('ui000001', 'tt9999995', 'dummy t note aabc1xyzbc3'),
@@ -157,8 +157,8 @@ values ('ui000001', 'tt9999993', 'dummy t note abcabc1xyz'),
 ('ui000006', 'tt9999995', 'dummy t note ababc1xyzc8');
 
 -- title_bookmark (uconst CHARACTER(10), tconst CHARACTER(10), timestamp TIMESTAMP)
-insert into movie_data_model.title_bookmark
-values ('ui000001', 'tt9999999', '2020-10-08 14:49:51.904682'),
+insert into movie_data_model.title_bookmark (uconst, tconst, tstamp) values
+('ui000001', 'tt9999999', '2020-10-08 14:49:51.904682'),
 ('ui000001', 'tt9999998', '2020-10-09 14:43:23.904682'),
 ('ui000001', 'tt9999997', '2020-08-01 19:49:31.634682'),
 ('ui000001', 'tt9999996', '2020-10-04 11:19:51.904682'),
