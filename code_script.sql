@@ -240,7 +240,16 @@ CREATE OR REPLACE FUNCTION string_search (search_string CHARACTER(50), uconst CH
 
 RETURNS TABLE (
   tconst CHARACTER(10),
-  primarytitle TEXT
+  titletype VARCHAR(20),
+  primarytitle TEXT,
+  originaltitle TEXT,
+  isadult BOOLEAN,
+  startyear CHARACTER(4),
+  endyear CHARACTER(4),
+  runtimeminutes INTEGER,
+  poster VARCHAR(256),
+  awards TEXT,
+  plot TEXT
 )
 
 LANGUAGE plpgsql
@@ -249,15 +258,15 @@ AS $$
 BEGIN
 
 -- stores search string in search history with timestamp
-INSERT INTO search_history(uconst, tstamp, search)
+INSERT INTO movie_data_model.search_history(uconst, tstamp, search)
 VALUES(uconst, NOW(), search_string);
 
 -- returns table by using ILIKE for string pattern matching
 -- ILIKE is used to pattern match and lower and upper case characters
 -- % matches sequences of zero or more characters
 -- || is used for string concatenation
-RETURN query SELECT t.tconst, t.primarytitle
-FROM title t
+RETURN query SELECT *
+FROM movie_data_model.title t
 WHERE t.primarytitle ILIKE '%'||search_string||'%' OR t.plot ILIKE '%'||search_string||'%';
 
 END
