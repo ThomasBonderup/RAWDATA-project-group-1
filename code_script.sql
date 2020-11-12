@@ -473,8 +473,13 @@ DROP FUNCTION IF EXISTS actor_search(string CHARACTER(50), uconst CHARACTER(10))
 CREATE OR REPLACE FUNCTION actor_search(string CHARACTER(50), uconst CHARACTER(10))
 
 RETURNS TABLE (
+  tconst CHARACTER(10),
   nconst CHARACTER(10),
-  primaryname VARCHAR(256)
+  primaryname VARCHAR(256),
+  ordering INTEGER,
+  category VARCHAR(50),
+  job TEXT,
+  characters TEXT
 )
 
 LANGUAGE plpgsql
@@ -483,15 +488,15 @@ AS $$
 BEGIN
 
 -- stores search string in search history with timestamp
-INSERT INTO search_history(uconst, tstamp, search)
+INSERT INTO movie_data_model.search_history(uconst, tstamp, search)
 VALUES(uconst, NOW(), string);
 
 -- returns table by using ILIKE for string pattern matching
 -- ILIKE is used to pattern match and lower and upper case characters
 -- % matches sequences of zero or more characters
 -- || is used for string concatenation
-RETURN query SELECT name.nconst, name.primaryname
-FROM name NATURAL JOIN title_principals
+RETURN query SELECT title_principals.tconst, title_principals.nconst, name.primaryname, title_principals.ordering, title_principals.category, title_principals.job, title_principals.characters
+FROM movie_data_model.name NATURAL JOIN movie_data_model.title_principals
 WHERE name.primaryname ILIKE '%'||string||'%' OR title_principals.characters ILIKE '%'||string||'%';
 
 END
