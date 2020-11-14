@@ -604,7 +604,7 @@ AS $$
 
 DECLARE
   w_elem TEXT;
-  q_start TEXT := 'SELECT t.tconst, SUM(relevance) RANK, primarytitle FROM title t, ( ';
+  q_start TEXT := 'SELECT t.tconst, SUM(relevance) RANK, primarytitle FROM movie_data_model.title t, ( ';
   q_end TEXT := ') w WHERE t.tconst = w.tconst GROUP BY t.tconst, primarytitle ORDER BY RANK DESC';
   q_result TEXT;
 BEGIN
@@ -612,7 +612,7 @@ BEGIN
 -- using foreach loop to concatenate input parameters to SQL-expression q_start
 FOREACH w_elem IN ARRAY w
 LOOP
-q_start := q_start || 'SELECT distinct wi.tconst, 1 relevance FROM wi WHERE word = '''|| w_elem ||''' UNION ALL ';
+q_start := q_start || 'SELECT distinct wi.tconst, 1 relevance FROM movie_data_model.wi WHERE word = '''|| w_elem ||''' UNION ALL ';
 END LOOP;
 
 -- use substring method to remove the last UNION ALL when building the query
