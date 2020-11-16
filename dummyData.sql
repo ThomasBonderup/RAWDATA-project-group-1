@@ -62,10 +62,10 @@ INSERT INTO movie_data_model.title (tconst, titletype, primarytitle, originaltit
 ('tt9999991', 'movie', 'Test 8 primarytitle', 'Test d primarytitle', 'f', '2020',	'2020', '60', 'N/A', 'N/A', 'test plot');
 
 insert INTO movie_data_model.name (nconst, primaryname, birthyear, deathyear) values
-('nm99999999', 'Test name', '1996', '2020');
+('nm9999999', 'Test name', '1996', '2020');
 
 insert INTO movie_data_model.title_principals (tconst, nconst, ordering, category, job, characters) values
-  ('tt9999999', 'nm99999999', '1', 'actor', '', '');
+  ('tt9999999', 'nm9999999', '1', 'actor', '', '');
 
 -- rating (uconst CHARACTER(10), tconst CHARACTER(10), rating integer, review text)
 insert into movie_data_model.rating (uconst, tconst, rating, review) values
@@ -84,8 +84,7 @@ insert into movie_data_model.rating (uconst, tconst, rating, review) values
 ('ui000005', 'tt9999997', '6', '10th time ive seen this, still a good movie'),
 ('ui000005', 'tt9999996', '8', 'learned something new the second time i saw this, changed my mind, its a great movie'),
 ('ui000006', 'tt9999997', '8', 'this is a review again'),
-('ui000006', 'tt9999995', '3', 'omg so bad'),
-('ui000006', 'tt9999994', '7', 'i watch this 3 times a year');
+('ui000006', 'tt9999995', '3', 'omg so bad');
 
 --rating_history (uconst CHARACTER(10), tconst CHARACTER(10), timestamp TIMESTAMP, rating integer, review text)
 insert into movie_data_model.rating_history (uconst, tconst, tstamp, rating, review) values
@@ -181,3 +180,5 @@ insert into movie_data_model.title_bookmark (uconst, tconst, tstamp) values
 ('ui000006', 'tt9999995', '2020-10-05 18:49:51.634682'),
 ('ui000006', 'tt9999994', '2020-10-01 17:19:11.634682'),
 ('ui000006', 'tt9999993', '2020-10-06 14:49:51.904682');
+
+SELECT ins_user_rating('ui000006', 'tt9999994', '7', 'i watch this 3 times a year');
