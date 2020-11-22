@@ -11,8 +11,8 @@ psql -U postgres -d raw1 -f B2_build_movie_db.sql
 
 psql -U postgres -d raw1 -f C2_build_framework_db.sql
 
-psql -U postgres -d raw1 -f dummyData.sql
-
 psql -U postgres -d raw1 -f code_script.sql
+
+psql -U postgres -d raw1 -f dummyData.sql
 
 psql -U postgres -d raw1 -a -f test_script.sql > test_output.txt
