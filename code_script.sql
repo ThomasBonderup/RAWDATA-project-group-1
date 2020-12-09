@@ -2,7 +2,7 @@
 
 -- code script to create function and procedures
 
-SET search_path TO movie_data_model;
+SET search_path TO 'movie_data_model';
 
 -- D.1
 ----------------------------------------- user functions
@@ -348,7 +348,7 @@ RETURNS TRIGGER LANGUAGE plpgsql AS $$
 
 BEGIN
 
-INSERT INTO rating_history(uconst, tconst, tstamp, rating, review)
+INSERT INTO movie_data_model.rating_history(uconst, tconst, tstamp, rating, review)
 VALUES (NEW.uconst, NEW.tconst, NOW(), NEW.rating, NEW.review);
 
 RETURN NEW;
@@ -367,22 +367,22 @@ RETURNS TRIGGER LANGUAGE plpgsql AS $$
 
 BEGIN
 
-UPDATE title_ratings
+UPDATE movie_data_model.title_ratings
 SET averagerating = (averagerating * numvotes - OLD.rating) / (numvotes - 1),
 numvotes = numvotes - 1
 WHERE tconst = NEW.tconst;
 
 RAISE NOTICE 'Value subtracted from average';
 
-UPDATE title_ratings
+UPDATE movie_data_model.title_ratings
 SET numvotes = numvotes + 1,
 averagerating = (averagerating) + ((NEW.rating - averagerating) / numvotes)
 WHERE tconst = NEW.tconst;
 
 RAISE NOTICE 'Average updated';
 
-UPDATE title_ratings
-SET weightedaverage = (((title_ratings.averagerating * title_ratings.numvotes) + (7.0 * 25000)) / (title_ratings.numvotes + 25000));
+UPDATE movie_data_model.title_ratings
+SET weightedaverage = (((movie_data_model.title_ratings.averagerating * movie_data_model.title_ratings.numvotes) + (7.0 * 25000)) / (movie_data_model.title_ratings.numvotes + 25000));
 
 RAISE NOTICE 'Weighted Average updated';
 
@@ -400,15 +400,15 @@ RETURNS TRIGGER LANGUAGE plpgsql AS $$
 
 BEGIN
 
-UPDATE title_ratings
+UPDATE movie_data_model.title_ratings
 SET numvotes = numvotes + 1,
 averagerating = (averagerating) + ((NEW.rating - averagerating) / numvotes)
 WHERE tconst = NEW.tconst;
 
 RAISE NOTICE 'Average updated';
 
-UPDATE title_ratings
-SET weightedaverage = (((title_ratings.averagerating * title_ratings.numvotes) + (7.0 * 25000)) / (title_ratings.numvotes + 25000));
+UPDATE movie_data_model.title_ratings
+SET weightedaverage = (((movie_data_model.title_ratings.averagerating * movie_data_model.title_ratings.numvotes) + (7.0 * 25000)) / (movie_data_model.title_ratings.numvotes + 25000));
 
 RAISE NOTICE 'Weighted Average updated';
 
@@ -529,13 +529,13 @@ $$;
 create or replace function generate_name_ratings() RETURNS TRIGGER LANGUAGE plpgsql AS $$
 begin
 
-create or replace view casting as
-select tconst, primarytitle, nconst, primaryname from title natural join title_principals natural join name;
+create or replace view movie_data_model.casting as
+select tconst, primarytitle, nconst, primaryname from movie_data_model.title natural join movie_data_model.title_principals natural join movie_data_model.name;
 
-UPDATE name_rating
+UPDATE movie_data_model.name_rating
 SET rating = t.rating
 from ( select nconst, sum(averagerating*numvotes)/sum(numvotes) as rating
-from casting natural join title_ratings
+from movie_data_model.casting natural join movie_data_model.title_ratings
 GROUP BY casting.nconst) as t
 
 where t.nconst = name_rating.nconst;
