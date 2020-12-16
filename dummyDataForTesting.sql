@@ -79,16 +79,16 @@ values ('ui000001', 'tt9999999', '7', 'Awesome! best ever :)'),
 ('ui000002', 'tt9999997', '9', 'i m to lazy to do a proper review'),
 ('ui000002', 'tt9999995', '4', 'good'),
 ('ui000003', 'tt9999998', '5', 'ok'),
-('ui000003', 'tt9999997', '6', 'amazing masterpiece'),
-('ui000003', 'tt9999996', '7', 'review'),
-('ui000004', 'tt9999997', '3', 'there is only one movie that is worse than this, and thats the room'),
-('ui000004', 'tt9999995', '5', 'good acting, shitty movie'),
-('ui000004', 'tt9999998', '6', 'best comedy series ive ever seen'),
-('ui000005', 'tt9999997', '6', '10th time ive seen this, still a good movie'),
-('ui000005', 'tt9999996', '8', 'learned something new the second time i saw this, changed my mind, its a great movie'),
-('ui000006', 'tt9999997', '8', 'this is a review again'),
-('ui000006', 'tt9999995', '3', 'omg so bad'),
-('ui000006', 'tt9999994', '7', 'i watch this 3 times a year');
+('ui000003', 'tt9999997', '6', 'amazing masterpiece');
+--('ui000003', 'tt9999996', '7', 'review'),
+--('ui000004', 'tt9999997', '3', 'there is only one movie that is worse than this, and thats the room'),
+--('ui000004', 'tt9999995', '5', 'good acting, shitty movie'),
+--('ui000004', 'tt9999998', '6', 'best comedy series ive ever seen'),
+--('ui000005', 'tt9999997', '6', '10th time ive seen this, still a good movie'),
+--('ui000005', 'tt9999996', '8', 'learned something new the second time i saw this, changed my mind, its a great movie'),
+--('ui000006', 'tt9999997', '8', 'this is a review again'),
+--('ui000006', 'tt9999995', '3', 'omg so bad'),
+--('ui000006', 'tt9999994', '7', 'i watch this 3 times a year');
 
 --rating_history (uconst CHARACTER(10), tconst CHARACTER(10), timestamp TIMESTAMP, rating integer, review text)
 insert into movie_data_model.rating_history
@@ -102,18 +102,18 @@ values ('ui000001', 'tt9999999', '2020-09-09 16:29:11.904682', '7', 'Awesome! be
 ('ui000002', 'tt9999995', '2020-03-09 12:39:11.904682', '6', 'ok'),
 ('ui000002', 'tt9999995', '2020-09-06 16:26:11.904682', '8', 'good'),
 ('ui000003', 'tt9999998', '2020-01-09 11:39:11.904682', '5', 'ok'),
-('ui000003', 'tt9999997', '2020-09-08 16:23:11.904682', '6', 'amazing masterpiece'),
-('ui000003', 'tt9999996', '2020-02-09 16:29:11.904682', '7', 'review'),
-('ui000004', 'tt9999997', '2020-09-09 16:57:11.904682', '3', 'there is only one movie that is worse than this, and thats the room'),
-('ui000004', 'tt9999995', '2020-06-09 12:29:11.904682', '5', 'good acting, shitty movie'),
-('ui000004', 'tt9999995', '2020-09-03 16:22:11.904682', '5', 'shitty movie'),
-('ui000004', 'tt9999995', '2020-08-09 15:29:11.904682', '5', 'good acting, shitty movie'),
-('ui000004', 'tt9999998', '2020-09-05 16:27:11.904682', '6', 'best comedy series ive ever seen'),
-('ui000005', 'tt9999997', '2020-02-09 17:29:11.904682', '6', '10th time ive seen this, still a good movie'),
-('ui000005', 'tt9999996', '2020-09-01 16:24:11.904682', '8', 'learned something new the second time i saw this, changed my mind, its a great movie'),
-('ui000006', 'tt9999997', '2020-08-09 18:29:11.904682', '8', 'this is a review again'),
-('ui000006', 'tt9999995', '2020-09-04 16:26:11.904682', '3', 'omg so bad'),
-('ui000006', 'tt9999994', '2020-02-09 11:29:11.904682', '7', 'i watch this 3 times a year');
+('ui000003', 'tt9999997', '2020-09-08 16:23:11.904682', '6', 'amazing masterpiece');
+--('ui000003', 'tt9999996', '2020-02-09 16:29:11.904682', '7', 'review'),
+--('ui000004', 'tt9999997', '2020-09-09 16:57:11.904682', '3', 'there is only one movie that is worse than this, and thats the room'),
+--('ui000004', 'tt9999995', '2020-06-09 12:29:11.904682', '5', 'good acting, shitty movie'),
+--('ui000004', 'tt9999995', '2020-09-03 16:22:11.904682', '5', 'shitty movie'),
+--('ui000004', 'tt9999995', '2020-08-09 15:29:11.904682', '5', 'good acting, shitty movie'),
+--('ui000004', 'tt9999998', '2020-09-05 16:27:11.904682', '6', 'best comedy series ive ever seen'),
+--('ui000005', 'tt9999997', '2020-02-09 17:29:11.904682', '6', '10th time ive seen this, still a good movie'),
+--('ui000005', 'tt9999996', '2020-09-01 16:24:11.904682', '8', 'learned something new the second time i saw this, changed my mind, its a great movie'),
+--('ui000006', 'tt9999997', '2020-08-09 18:29:11.904682', '8', 'this is a review again'),
+--('ui000006', 'tt9999995', '2020-09-04 16:26:11.904682', '3', 'omg so bad'),
+--('ui000006', 'tt9999994', '2020-02-09 11:29:11.904682', '7', 'i watch this 3 times a year');
 
 -- search_history (uconst CHARACTER(10), timestamp TIMESTAMP, search text)
 insert into movie_data_model.search_history

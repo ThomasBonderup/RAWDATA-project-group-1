@@ -1,3 +1,5 @@
 rawdata_small.backup
 rawdata_large.backup
 rawdata_xlarge.backup
+
+build_database_on_ruc.sh
