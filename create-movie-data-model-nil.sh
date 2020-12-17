@@ -11,8 +11,8 @@ PGPASSWORD=postgres psql -U postgres -d raw1 -f B2_build_movie_db.sql
 
 PGPASSWORD=postgres psql -U postgres -d raw1 -f C2_build_framework_db.sql
 
-PGPASSWORD=postgres psql -U postgres -d raw1 -f dummyData.sql
-
 PGPASSWORD=postgres psql -U postgres -d raw1 -f code_script.sql
+
+PGPASSWORD=postgres psql -U postgres -d raw1 -f dummyDataForTesting.sql
 
 PGPASSWORD=postgres psql -U postgres -d raw1 -a -f test_script.sql > test_output.txt

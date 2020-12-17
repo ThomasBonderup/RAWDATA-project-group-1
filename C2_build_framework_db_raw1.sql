@@ -7,8 +7,9 @@ uconst CHARACTER(10),
 firstName text,
 lastName text,
 email VARCHAR(50),
-password VARCHAR(16),
+password VARCHAR(512),
 username VARCHAR(15),
+salt VARCHAR(512),
 PRIMARY KEY (uconst)
 );
 

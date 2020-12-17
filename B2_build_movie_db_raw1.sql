@@ -147,7 +147,7 @@ CREATE SCHEMA movie_data_model;
 SET search_path TO movie_data_model;
 
 --
--- Name: title; Type: TABLE; Schema: public; Owner: raw1
+-- Name: title; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE movie_data_model.title (
@@ -168,7 +168,7 @@ CREATE TABLE movie_data_model.title (
 ALTER TABLE movie_data_model.title OWNER TO raw1;
 
 --
--- Name: title_genres; Type: TABLE; Schema: movie_data_model; Owner: raw1
+-- Name: title_genres; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
 CREATE TABLE movie_data_model.title_genres (
@@ -181,7 +181,7 @@ CREATE TABLE movie_data_model.title_genres (
 ALTER TABLE movie_data_model.title_genres OWNER TO raw1;
 
 --
--- Name: movie_data_model.name; Type: TABLE; Schema: movie_data_model; Owner: raw1
+-- Name: movie_data_model.name; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
 CREATE TABLE movie_data_model.name (
@@ -195,7 +195,7 @@ CREATE TABLE movie_data_model.name (
 ALTER TABLE movie_data_model.name OWNER TO raw1;
 
 --
--- Name: title_principals; Type: TABLE; Schema: movie_data_model; Owner: raw1
+-- Name: title_principals; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
 CREATE TABLE movie_data_model.title_principals (
@@ -213,7 +213,7 @@ CREATE TABLE movie_data_model.title_principals (
 ALTER TABLE movie_data_model.title_principals OWNER TO raw1;
 
 --
--- Name: movie_data_model.primaryprofession; Type: TABLE; Schema: movie_data_model; Owner: raw1
+-- Name: movie_data_model.primaryprofession; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
 CREATE TABLE movie_data_model.primaryprofession (
@@ -226,7 +226,7 @@ CREATE TABLE movie_data_model.primaryprofession (
 ALTER TABLE movie_data_model.primaryprofession OWNER TO raw1;
 
 --
--- Name: movie_data_model.knownfortitles; Type: TABLE; Schema: movie_data_model; Owner: raw1
+-- Name: movie_data_model.knownfortitles; Type: TABLE; Schema: movie_data_model; Owner: postgres
 -- DEFAULT VALUE
 --
 
@@ -241,7 +241,7 @@ CREATE TABLE movie_data_model.knownfortitles (
 ALTER TABLE movie_data_model.knownfortitles OWNER TO raw1;
 
 --
--- Name: local_title; Type: TABLE; Schema: movie_data_model; Owner: raw1
+-- Name: local_title; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
 CREATE TABLE movie_data_model.local_title (
@@ -260,7 +260,7 @@ CREATE TABLE movie_data_model.local_title (
 ALTER TABLE movie_data_model.local_title OWNER TO raw1;
 
 --
--- Name: title_episode; Type: TABLE; Schema: movie_data_model; Owner: raw1
+-- Name: title_episode; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
 CREATE TABLE movie_data_model.title_episode (
@@ -276,7 +276,7 @@ CREATE TABLE movie_data_model.title_episode (
 ALTER TABLE movie_data_model.title_episode OWNER TO raw1;
 
 --
--- Name: title_ratings; Type: TABLE; Schema: movie_data_model; Owner: raw1
+-- Name: title_ratings; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
 CREATE TABLE movie_data_model.title_ratings (
@@ -291,7 +291,7 @@ CREATE TABLE movie_data_model.title_ratings (
 ALTER TABLE movie_data_model.title_ratings OWNER TO raw1;
 
 --
--- Name: wi; Type: TABLE; Schema: movie_data_model; Owner: raw1
+-- Name: wi; Type: TABLE; Schema: movie_data_model; Owner: postgres
 --
 
 CREATE TABLE movie_data_model.wi (
